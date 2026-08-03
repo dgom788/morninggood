@@ -1,0 +1,2496 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나루 도구함</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+
+<style>
+:root{
+  --bg:#eef2f7;
+  --surface:#ffffff;
+  --surface-soft:#f7f9fc;
+  --line:#d9e0ea;
+  --text:#172033;
+  --muted:#6d788a;
+  --primary:#3157d5;
+  --primary-dark:#2444b5;
+  --accent:#0f9f8f;
+  --danger:#dc4d5d;
+  --warning:#d89829;
+  --shadow:0 16px 42px rgba(38,52,79,.10);
+}
+
+*{box-sizing:border-box}
+
+html{scroll-behavior:smooth}
+
+body{
+  margin:0;
+  min-height:100vh;
+  color:var(--text);
+  font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Segoe UI","Malgun Gothic",sans-serif;
+  background:var(--bg);
+}
+
+button,input,select,textarea{font:inherit}
+button{border:0}
+button,.upload-area{-webkit-tap-highlight-color:transparent}
+
+.app{
+  width:min(1480px,100%);
+  min-height:100vh;
+  margin:0 auto;
+  padding:0;
+}
+
+.topbar{
+  position:fixed;
+  inset:0 auto 0 0;
+  z-index:20;
+  width:250px;
+  min-height:100vh;
+  padding:24px 18px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  align-items:stretch;
+  gap:22px;
+  background:#111827;
+  box-shadow:8px 0 28px rgba(15,23,42,.12);
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:0;
+  padding:0 4px;
+}
+
+.brand-mark{
+  width:44px;
+  height:44px;
+  flex:0 0 auto;
+  display:grid;
+  place-items:center;
+  border-radius:13px;
+  color:#fff;
+  font-size:20px;
+  font-weight:1000;
+  background:linear-gradient(135deg,#3157d5,#0f9f8f);
+  box-shadow:none;
+}
+
+.brand-name{
+  color:#fff;
+  font-size:17px;
+  font-weight:1000;
+  letter-spacing:-.04em;
+}
+
+.brand-sub{
+  margin-top:3px;
+  color:#9ca7b8;
+  font-size:11px;
+  line-height:1.45;
+}
+
+.home-btn{
+  display:none;
+  align-items:center;
+  justify-content:flex-start;
+  width:100%;
+  min-width:0;
+  height:44px;
+  padding:0 14px;
+  border-radius:11px;
+  color:#dbe4f2;
+  background:#1f2937;
+  box-shadow:none;
+  font-weight:900;
+  cursor:pointer;
+  transition:.18s ease;
+}
+
+.home-btn:hover{
+  transform:none;
+  background:#273449;
+}
+
+main{
+  margin-left:250px;
+  min-height:100vh;
+  padding:34px 34px 60px;
+}
+
+.screen{display:none}
+.screen.active{
+  display:block;
+  animation:screenIn .2s ease both;
+}
+
+@keyframes screenIn{
+  from{opacity:0;transform:translateY(5px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.hero{
+  padding:8px 0 24px;
+  text-align:left;
+}
+
+.hero-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 10px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  color:var(--muted);
+  background:#fff;
+  box-shadow:none;
+  font-size:11px;
+  font-weight:900;
+}
+
+.hero h1{
+  margin:18px 0 10px;
+  font-size:clamp(34px,5vw,58px);
+  line-height:1.08;
+  letter-spacing:-.065em;
+}
+
+.hero p{
+  margin:0;
+  color:var(--muted);
+  font-size:15px;
+  line-height:1.7;
+}
+
+.menu-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:18px;
+  max-width:none;
+  margin:8px 0 0;
+}
+
+.menu-card{
+  position:relative;
+  min-height:220px;
+  padding:24px;
+  overflow:hidden;
+  text-align:left;
+  border:1px solid var(--line);
+  border-radius:18px;
+  color:var(--text);
+  background:var(--surface);
+  box-shadow:var(--shadow);
+  cursor:pointer;
+  transition:.18s ease;
+}
+
+.menu-card::after{display:none}
+
+.menu-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 20px 48px rgba(38,52,79,.13);
+  border-color:#c9d2df;
+}
+
+.menu-icon{
+  width:54px;
+  height:54px;
+  display:grid;
+  place-items:center;
+  margin-bottom:22px;
+  border-radius:14px;
+  color:#fff;
+  font-size:25px;
+  background:var(--icon);
+  box-shadow:none;
+}
+
+.menu-label{
+  color:var(--muted);
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.08em;
+}
+
+.menu-title{
+  margin-top:7px;
+  font-size:23px;
+  font-weight:1000;
+  letter-spacing:-.04em;
+}
+
+.menu-desc{
+  margin-top:10px;
+  max-width:520px;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.65;
+}
+
+.menu-arrow{
+  position:absolute;
+  right:20px;
+  top:20px;
+  width:36px;
+  height:36px;
+  display:grid;
+  place-items:center;
+  border-radius:10px;
+  color:#4d5a70;
+  background:#f0f3f8;
+  font-size:18px;
+  font-weight:1000;
+}
+
+.page-head{
+  padding:0 0 22px;
+  text-align:left;
+}
+
+.page-kicker{
+  color:var(--primary);
+  font-size:11px;
+  font-weight:1000;
+  letter-spacing:.12em;
+}
+
+.page-head h1{
+  margin:8px 0 8px;
+  font-size:clamp(30px,4vw,46px);
+  letter-spacing:-.06em;
+}
+
+.page-head p{
+  margin:0;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.65;
+}
+
+.panel{
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:var(--surface);
+  box-shadow:var(--shadow);
+}
+
+.upload-area{
+  margin:20px;
+  padding:34px 20px;
+  border:1.5px dashed #b8c4d7;
+  border-radius:16px;
+  text-align:center;
+  background:var(--surface-soft);
+  cursor:pointer;
+  transition:.18s ease;
+}
+
+.upload-area:hover,
+.upload-area.dragover{
+  border-color:var(--primary);
+  background:#eef3ff;
+  transform:none;
+}
+
+.upload-icon{
+  width:58px;
+  height:58px;
+  display:grid;
+  place-items:center;
+  margin:0 auto 14px;
+  border-radius:14px;
+  color:#fff;
+  font-size:28px;
+  background:linear-gradient(135deg,var(--primary),#5b75df);
+  box-shadow:none;
+}
+
+.upload-title{
+  margin-bottom:7px;
+  font-size:18px;
+  font-weight:1000;
+}
+
+.upload-sub{
+  color:var(--muted);
+  font-size:13px;
+}
+
+input[type="file"]{display:none}
+
+.controls{
+  display:grid;
+  grid-template-columns:1fr 1fr auto auto;
+  gap:12px;
+  padding:0 20px 20px;
+  align-items:end;
+}
+
+.control{
+  padding:13px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:var(--surface-soft);
+}
+
+.control label{
+  display:block;
+  margin-bottom:7px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:900;
+}
+
+select,.action-btn{
+  width:100%;
+  height:42px;
+  border-radius:10px;
+}
+
+select{
+  padding:0 11px;
+  border:1px solid var(--line);
+  color:var(--text);
+  background:#fff;
+  outline:none;
+}
+
+.action-btn{
+  padding:0 15px;
+  color:#fff;
+  background:var(--text);
+  font-weight:1000;
+  white-space:nowrap;
+  cursor:pointer;
+  transition:.16s ease;
+}
+
+.action-btn:hover:not(:disabled){
+  transform:translateY(-1px);
+  box-shadow:0 8px 18px rgba(24,32,51,.14);
+}
+
+.action-btn:disabled{
+  opacity:.42;
+  cursor:not-allowed;
+}
+
+.btn-primary{background:var(--primary)}
+.btn-primary:hover:not(:disabled){background:var(--primary-dark)}
+.btn-danger{background:var(--danger)}
+.btn-gray{background:#667085}
+
+.status{
+  padding:0 20px 20px;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.progress{
+  display:none;
+  width:100%;
+  height:8px;
+  margin-top:10px;
+  overflow:hidden;
+  border-radius:999px;
+  background:#e5e9f1;
+}
+
+.progress span{
+  display:block;
+  width:0;
+  height:100%;
+  border-radius:inherit;
+  background:linear-gradient(90deg,var(--primary),var(--accent));
+  transition:width .2s ease;
+}
+
+.group{
+  margin-top:20px;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:var(--surface);
+  box-shadow:0 10px 28px rgba(45,55,90,.07);
+}
+
+.group-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding:15px 17px;
+  border-bottom:1px solid var(--line);
+}
+
+.group-title{
+  font-weight:1000;
+  word-break:break-all;
+}
+
+.group-meta{
+  margin-top:4px;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.group-actions{
+  display:flex;
+  gap:8px;
+  flex-shrink:0;
+}
+
+.group-actions .action-btn{
+  width:auto;
+  height:36px;
+  padding:0 13px;
+}
+
+.result{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:16px;
+  padding:16px;
+}
+
+.card{
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#fff;
+}
+
+.preview{
+  min-height:210px;
+  display:grid;
+  place-items:center;
+  padding:10px;
+  background:#eef2f7;
+}
+
+.preview img{
+  width:100%;
+  height:auto;
+  max-height:340px;
+  object-fit:contain;
+  border-radius:8px;
+  background:#fff;
+  box-shadow:0 6px 14px rgba(24,32,51,.10);
+}
+
+.card-body{padding:13px}
+.page-title{margin-bottom:9px;font-weight:1000}
+.card-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+.empty{
+  margin-top:20px;
+  padding:28px 18px;
+  border:1px dashed #bdc7d6;
+  border-radius:15px;
+  color:var(--muted);
+  background:rgba(255,255,255,.75);
+  text-align:center;
+}
+
+.notice,
+.company-tool-notice{
+  margin-top:18px;
+  padding:15px 17px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  color:var(--muted);
+  background:rgba(255,255,255,.75);
+  font-size:13px;
+  line-height:1.7;
+}
+
+.calc-wrap,.korean-calc-wrap,.company-tool-wrap{
+  max-width:1100px;
+  margin:0;
+}
+
+.calc-panel,.korean-calc-panel{padding:20px}
+
+.calc-tabs{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  padding:5px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:#eef2f7;
+}
+
+.calc-tab{
+  min-height:44px;
+  padding:9px 13px;
+  border-radius:9px;
+  color:var(--muted);
+  background:transparent;
+  font-weight:1000;
+  cursor:pointer;
+  transition:.16s ease;
+}
+
+.calc-tab.active{
+  color:#fff;
+  background:var(--primary);
+  box-shadow:none;
+}
+
+.calc-content{display:none;padding-top:20px}
+.calc-content.active{display:block}
+
+.calc-grid,
+.korean-input-grid,
+.korean-result-grid,
+.company-tool-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+
+.korean-input-grid{grid-template-columns:1.5fr 1fr}
+
+.calc-field{
+  padding:15px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:var(--surface-soft);
+}
+
+.calc-field label{
+  display:block;
+  margin-bottom:8px;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:900;
+}
+
+.input-box{position:relative}
+
+.input-box input{
+  width:100%;
+  height:50px;
+  padding:0 45px 0 14px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  color:var(--text);
+  background:#fff;
+  font-size:18px;
+  font-weight:900;
+  outline:none;
+  transition:.16s ease;
+}
+
+.input-box input:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(49,87,213,.10);
+}
+
+.input-unit{
+  position:absolute;
+  right:14px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--muted);
+  font-size:13px;
+  font-weight:900;
+  pointer-events:none;
+}
+
+.calc-result,
+.korean-result-card,
+.document-copy-card{
+  margin-top:16px;
+  padding:20px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:#f8fafc;
+}
+
+.korean-result-card{margin-top:0}
+.korean-result-card.percent-card{background:#f5fbfa}
+
+.result-label{
+  color:var(--muted);
+  font-size:12px;
+  font-weight:900;
+}
+
+.result-value,
+.korean-number-result{
+  margin-top:7px;
+  font-size:clamp(28px,5vw,44px);
+  font-weight:1000;
+  line-height:1.15;
+  letter-spacing:-.055em;
+  word-break:break-all;
+}
+
+.result-desc{
+  margin-top:8px;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.6;
+}
+
+.calc-actions{
+  display:flex;
+  justify-content:flex-end;
+  margin-top:13px;
+}
+
+.calc-actions .action-btn{
+  width:auto;
+  min-width:105px;
+}
+
+.error-text{color:var(--danger)}
+
+.korean-text-result{
+  min-height:56px;
+  margin-top:12px;
+  padding:12px 13px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  color:#b53854;
+  background:#fff;
+  font-size:15px;
+  font-weight:1000;
+  line-height:1.6;
+  word-break:keep-all;
+}
+
+.korean-text-result.placeholder{
+  color:#98a2b3;
+}
+
+.korean-copy-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:12px;
+}
+
+.korean-bottom-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  margin-top:15px;
+}
+
+.document-copy-title{
+  color:var(--muted);
+  font-size:11px;
+  font-weight:1000;
+  letter-spacing:.05em;
+}
+
+.document-copy-box{
+  min-height:104px;
+  margin-top:9px;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  color:var(--text);
+  background:#fff;
+  font-size:16px;
+  font-weight:900;
+  line-height:1.75;
+  white-space:pre-wrap;
+  word-break:keep-all;
+}
+
+.document-copy-box.placeholder{
+  color:#98a2b3;
+  font-weight:800;
+}
+
+.document-copy-card .action-btn{margin-top:11px}
+
+.korean-bottom-actions .action-btn{
+  width:auto;
+  min-width:116px;
+}
+
+.company-tool-card{
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:var(--surface);
+  box-shadow:var(--shadow);
+}
+
+.company-tool-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:15px 17px;
+  border-bottom:1px solid var(--line);
+}
+
+.company-tool-title{
+  font-size:15px;
+  font-weight:1000;
+}
+
+.company-tool-count{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:42px;
+  height:28px;
+  padding:0 10px;
+  border-radius:999px;
+  color:#82580d;
+  background:#fff2c7;
+  font-size:11px;
+  font-weight:1000;
+}
+
+.company-tool-body{padding:16px}
+
+.company-tool-textarea{
+  width:100%;
+  min-height:400px;
+  resize:vertical;
+  padding:15px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  color:var(--text);
+  background:#fbfdff;
+  outline:none;
+  font:14px/1.75 "Consolas","SFMono-Regular","Malgun Gothic",monospace;
+  transition:.16s ease;
+}
+
+.company-tool-textarea:focus{
+  border-color:var(--warning);
+  background:#fff;
+  box-shadow:0 0 0 3px rgba(216,152,41,.11);
+}
+
+.company-tool-textarea::placeholder{color:#9aa6b5}
+
+.company-tool-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px;
+  margin-top:13px;
+}
+
+.company-tool-actions .action-btn{
+  width:auto;
+  min-width:105px;
+}
+
+.company-tool-status{
+  min-height:21px;
+  margin-top:11px;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.company-tool-status.success{
+  color:#16845b;
+  font-weight:900;
+}
+
+.company-tool-status.error{
+  color:var(--danger);
+  font-weight:900;
+}
+
+@media(max-width:980px){
+  .topbar{
+    position:static;
+    width:auto;
+    min-height:auto;
+    padding:16px 18px;
+    flex-direction:row;
+    align-items:center;
+    justify-content:space-between;
+  }
+
+  .brand-sub{display:none}
+
+  .home-btn{
+    width:auto;
+    min-width:84px;
+    justify-content:center;
+  }
+
+  main{
+    margin-left:0;
+    padding:24px 20px 50px;
+  }
+
+  .controls{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media(max-width:760px){
+  .menu-grid,
+  .calc-grid,
+  .korean-input-grid,
+  .korean-result-grid,
+  .company-tool-grid{
+    grid-template-columns:1fr;
+  }
+
+  .controls{grid-template-columns:1fr}
+
+  .group-head{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .group-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+  }
+
+  .group-actions .action-btn{width:100%}
+
+  .calc-tabs{grid-template-columns:1fr}
+
+  .korean-bottom-actions{
+    display:grid;
+    grid-template-columns:1fr;
+  }
+
+  .korean-bottom-actions .action-btn{width:100%}
+}
+
+@media(max-width:560px){
+  .topbar{padding:13px 14px}
+  main{padding:18px 12px 40px}
+  .hero h1{font-size:36px}
+  .menu-card{min-height:200px;padding:20px}
+  .panel{border-radius:14px}
+  .upload-area{margin:14px;padding:28px 14px}
+  .controls{padding:0 14px 14px}
+  .status{padding:0 14px 14px}
+  .result{grid-template-columns:1fr}
+  .calc-panel,.korean-calc-panel{padding:14px}
+  .company-tool-textarea{min-height:310px}
+}
+
+.side-nav{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.side-nav-btn{
+  width:100%;
+  min-height:46px;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:0 13px;
+  border-radius:11px;
+  color:#aeb8c8;
+  background:transparent;
+  font-size:13px;
+  font-weight:900;
+  text-align:left;
+  cursor:pointer;
+  transition:.16s ease;
+}
+
+.side-nav-btn:hover{
+  color:#fff;
+  background:#1d293b;
+}
+
+.side-nav-btn.active{
+  color:#fff;
+  background:#293750;
+}
+
+.side-nav-icon{
+  width:25px;
+  height:25px;
+  flex:0 0 auto;
+  display:grid;
+  place-items:center;
+  border-radius:8px;
+  color:#dfe7f4;
+  background:#334155;
+  font-size:13px;
+  font-weight:1000;
+}
+
+.side-nav-btn.active .side-nav-icon{
+  color:#fff;
+  background:linear-gradient(135deg,#3157d5,#0f9f8f);
+}
+
+.side-note{
+  margin-top:auto;
+  padding:13px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:11px;
+  color:#7f8ba0;
+  background:rgba(255,255,255,.03);
+  font-size:11px;
+  line-height:1.55;
+}
+
+.hero{
+  min-height:265px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 330px;
+  align-items:center;
+  gap:28px;
+  padding:8px 0 22px;
+}
+
+.hero-copy{
+  min-width:0;
+}
+
+.hero-character{
+  min-height:245px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  overflow:hidden;
+}
+
+.hero-character img{
+  display:block;
+  width:min(100%,300px);
+  max-height:285px;
+  object-fit:contain;
+  filter:drop-shadow(0 16px 20px rgba(38,52,79,.18));
+}
+
+@media(max-width:980px){
+  .topbar{
+    overflow-x:auto;
+    gap:14px;
+  }
+
+  .side-nav{
+    flex:1;
+    min-width:max-content;
+    flex-direction:row;
+    gap:6px;
+  }
+
+  .side-nav-btn{
+    width:auto;
+    min-height:42px;
+    padding:0 12px;
+    white-space:nowrap;
+  }
+
+  .side-note{
+    display:none;
+  }
+
+  .hero{
+    grid-template-columns:minmax(0,1fr) 250px;
+  }
+
+  .hero-character img{
+    max-height:245px;
+  }
+}
+
+@media(max-width:700px){
+  .topbar{
+    align-items:flex-start;
+    flex-wrap:wrap;
+  }
+
+  .brand{
+    width:100%;
+  }
+
+  .side-nav{
+    width:100%;
+    overflow-x:auto;
+    padding-bottom:3px;
+  }
+
+  .hero{
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+
+  .hero-character{
+    min-height:180px;
+    justify-content:flex-start;
+  }
+
+  .hero-character img{
+    width:220px;
+    max-height:220px;
+  }
+}
+
+
+.home-image-only{
+  min-height:calc(100vh - 68px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:40px;
+}
+
+.home-image-only img{
+  display:block;
+  width:min(72vw,720px);
+  max-height:78vh;
+  object-fit:contain;
+  filter:drop-shadow(0 22px 28px rgba(38,52,79,.18));
+}
+
+@media(max-width:980px){
+  .home-image-only{
+    min-height:calc(100vh - 110px);
+    padding:28px 20px;
+  }
+
+  .home-image-only img{
+    width:min(86vw,620px);
+    max-height:72vh;
+  }
+}
+
+@media(max-width:560px){
+  .home-image-only{
+    min-height:calc(100vh - 128px);
+    padding:20px 10px;
+  }
+
+  .home-image-only img{
+    width:min(94vw,460px);
+    max-height:68vh;
+  }
+}
+
+</style>
+
+</head>
+
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">N</div>
+      <div>
+        <div class="brand-name">나루 도구함</div>
+        <div class="brand-sub">파일 변환과 간단한 계산을 한곳에서</div>
+      </div>
+    </div>
+
+    <nav class="side-nav" aria-label="도구 메뉴">
+      <button type="button" class="side-nav-btn active" data-open="homeScreen">
+        <span class="side-nav-icon">⌂</span>
+        <span>메인</span>
+      </button>
+
+      <button type="button" class="side-nav-btn" data-open="pdfScreen">
+        <span class="side-nav-icon">▤</span>
+        <span>PDF → PNG</span>
+      </button>
+
+      <button type="button" class="side-nav-btn" data-open="calcScreen">
+        <span class="side-nav-icon">%</span>
+        <span>퍼센트 계산기</span>
+      </button>
+
+      <button type="button" class="side-nav-btn" data-open="koreanAmountScreen">
+        <span class="side-nav-icon">₩</span>
+        <span>한글 금액 계산기</span>
+      </button>
+
+      <button type="button" class="side-nav-btn" data-open="companyConverterScreen">
+        <span class="side-nav-icon">↔</span>
+        <span>업체 데이터 변환기</span>
+      </button>
+    </nav>
+
+    <div class="side-note">
+      모든 작업은 브라우저 안에서 처리됩니다.
+    </div>
+  </div>
+
+  <main>
+    <section class="screen active" id="homeScreen">
+      <div class="home-image-only">
+        <img src="https://i.ibb.co/NdQDfbH3/Chat-GPT-Image-2026-8-3-10-56-14-removebg-preview.png" alt="나루 도구함 캐릭터">
+      </div>
+    </section>
+
+    <section class="screen" id="pdfScreen">
+      <div class="page-head">
+        <div class="page-kicker">PDF PAGE EXPORTER</div>
+        <h1>PDF → PNG 변환기</h1>
+        <p>PDF 여러 개를 추가해도 기존 변환 결과는 유지됩니다.</p>
+      </div>
+
+      <section class="panel">
+        <div class="upload-area" id="dropArea">
+          <input type="file" id="pdfInput" accept="application/pdf,.pdf" multiple>
+          <div class="upload-icon">📄</div>
+          <div class="upload-title">PDF 파일 여러 개 선택 또는 드래그</div>
+          <div class="upload-sub">파일을 누르거나 이 영역으로 끌어오세요.</div>
+        </div>
+
+        <div class="controls">
+          <div class="control">
+            <label for="scaleSelect">저장 해상도</label>
+            <select id="scaleSelect">
+              <option value="1">1배율 / 빠름</option>
+              <option value="2" selected>2배율 / 기본 추천</option>
+              <option value="3">3배율 / 고화질</option>
+            </select>
+          </div>
+
+          <div class="control">
+            <label for="bgSelect">배경 처리</label>
+            <select id="bgSelect">
+              <option value="white" selected>흰색 배경으로 저장</option>
+              <option value="transparent">투명 배경 유지</option>
+            </select>
+          </div>
+
+          <button type="button" id="zipBtn" class="action-btn btn-primary" disabled>남은 PNG 전체 ZIP</button>
+          <button type="button" id="clearAllBtn" class="action-btn btn-danger" disabled>전체 PNG 삭제</button>
+        </div>
+
+        <div class="status">
+          <div id="statusText">아직 변환된 PDF가 없습니다.</div>
+          <div class="progress" id="progress"><span id="progressBar"></span></div>
+        </div>
+      </section>
+
+      <div id="groups"></div>
+
+      <div class="empty" id="emptyBox">
+        변환된 PNG가 여기에 표시됩니다.
+      </div>
+
+      <div class="notice">
+        ※ PDF를 추가로 올려도 기존 PNG는 유지됩니다.<br>
+        ※ 삭제한 PNG는 ZIP 저장 목록에서도 제외됩니다.<br>
+        ※ 모든 변환은 브라우저 안에서 진행됩니다.
+      </div>
+    </section>
+
+    <section class="screen" id="calcScreen">
+      <div class="page-head">
+        <div class="page-kicker">PERCENT CALCULATOR</div>
+        <h1>퍼센트 계산기</h1>
+        <p>입력하는 즉시 계산 결과가 표시됩니다.</p>
+      </div>
+
+      <div class="calc-wrap">
+        <section class="panel calc-panel">
+          <div class="calc-tabs">
+            <button type="button" class="calc-tab active" data-calc-tab="amountPercent">금액의 몇 %인지 계산</button>
+            <button type="button" class="calc-tab" data-calc-tab="ratioPercent">두 금액의 비율 계산</button>
+          </div>
+
+          <div class="calc-content active" id="amountPercent">
+            <div class="calc-grid">
+              <div class="calc-field">
+                <label for="baseAmount">금액</label>
+                <div class="input-box">
+                  <input type="text" id="baseAmount" inputmode="decimal" autocomplete="off" placeholder="예: 100,000">
+                  <span class="input-unit">원</span>
+                </div>
+              </div>
+
+              <div class="calc-field">
+                <label for="percentAmount">퍼센트</label>
+                <div class="input-box">
+                  <input type="text" id="percentAmount" inputmode="decimal" autocomplete="off" placeholder="예: 15">
+                  <span class="input-unit">%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="calc-result">
+              <div class="result-label">계산 결과</div>
+              <div class="result-value" id="amountResult">0원</div>
+              <div class="result-desc" id="amountDesc">금액과 퍼센트를 입력해 주세요.</div>
+            </div>
+
+            <div class="calc-actions" style="gap:10px;">
+              <button type="button" class="action-btn btn-primary" id="copyAmount">결과 복사</button>
+              <button type="button" class="action-btn btn-gray" id="resetAmount">입력 초기화</button>
+            </div>
+          </div>
+
+          <div class="calc-content" id="ratioPercent">
+            <div class="calc-grid">
+              <div class="calc-field">
+                <label for="totalAmount">기준 금액</label>
+                <div class="input-box">
+                  <input type="text" id="totalAmount" inputmode="decimal" autocomplete="off" placeholder="예: 100,000">
+                  <span class="input-unit">원</span>
+                </div>
+              </div>
+
+              <div class="calc-field">
+                <label for="partAmount">비교 금액</label>
+                <div class="input-box">
+                  <input type="text" id="partAmount" inputmode="decimal" autocomplete="off" placeholder="예: 25,000">
+                  <span class="input-unit">원</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="calc-result">
+              <div class="result-label">계산 결과</div>
+              <div class="result-value" id="ratioResult">0%</div>
+              <div class="result-desc" id="ratioDesc">기준 금액과 비교 금액을 입력해 주세요.</div>
+            </div>
+
+            <div class="calc-actions" style="gap:10px;">
+              <button type="button" class="action-btn btn-primary" id="copyRatio">결과 복사</button>
+              <button type="button" class="action-btn btn-gray" id="resetRatio">입력 초기화</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="screen" id="koreanAmountScreen">
+      <div class="page-head">
+        <div class="page-kicker">KOREAN AMOUNT CALCULATOR</div>
+        <h1>한글 금액 계산기</h1>
+        <p>입력 금액과 퍼센트 금액을 숫자·한글 표기로 함께 확인할 수 있습니다.</p>
+      </div>
+
+      <div class="korean-calc-wrap">
+        <section class="panel korean-calc-panel">
+          <div class="korean-input-grid">
+            <div class="calc-field">
+              <label for="koreanAmountInput">기준 금액</label>
+              <div class="input-box">
+                <input type="text" id="koreanAmountInput" inputmode="numeric" autocomplete="off" placeholder="예: 5,000,000">
+                <span class="input-unit">원</span>
+              </div>
+            </div>
+
+            <div class="calc-field">
+              <label for="koreanPercentInput">계산할 퍼센트</label>
+              <div class="input-box">
+                <input type="text" id="koreanPercentInput" inputmode="decimal" autocomplete="off" value="50">
+                <span class="input-unit">%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="korean-result-grid">
+            <article class="korean-result-card">
+              <div class="result-label">입력한 기준 금액</div>
+              <div class="korean-number-result" id="koreanBaseNumber">0원</div>
+              <div class="korean-text-result placeholder" id="koreanBaseText">금액을 입력해 주세요.</div>
+              <div class="korean-copy-actions">
+                <button type="button" class="action-btn btn-gray" id="copyKoreanBaseNumber">숫자 복사</button>
+                <button type="button" class="action-btn btn-primary" id="copyKoreanBaseText">한글 복사</button>
+              </div>
+            </article>
+
+            <article class="korean-result-card percent-card">
+              <div class="result-label" id="koreanPercentLabel">50% 계산 금액</div>
+              <div class="korean-number-result" id="koreanPercentNumber">0원</div>
+              <div class="korean-text-result placeholder" id="koreanPercentText">금액을 입력해 주세요.</div>
+              <div class="korean-copy-actions">
+                <button type="button" class="action-btn btn-gray" id="copyKoreanPercentNumber">숫자 복사</button>
+                <button type="button" class="action-btn btn-primary" id="copyKoreanPercentText">한글 복사</button>
+              </div>
+            </article>
+          </div>
+
+          <div class="document-copy-card">
+            <div class="document-copy-title">퍼센트 금액 문서용 문구</div>
+            <div class="document-copy-box placeholder" id="koreanDocumentText">금액과 퍼센트를 입력해 주세요.</div>
+            <button type="button" class="action-btn btn-primary" id="copyKoreanDocument">문서용 문구 복사</button>
+          </div>
+
+          <div class="korean-bottom-actions">
+            <button type="button" class="action-btn btn-primary" id="copyKoreanAll">전체 결과 복사</button>
+            <button type="button" class="action-btn btn-gray" id="resetKoreanAmount">입력 초기화</button>
+          </div>
+        </section>
+
+        <div class="notice">
+          ※ 퍼센트 계산 결과는 원 단위로 반올림합니다.<br>
+          ※ 한글 금액은 문서에 붙여 넣기 쉬운 ‘금 오백만원정’ 형식으로 표시됩니다.
+        </div>
+      </div>
+    </section>
+
+
+    <section class="screen" id="companyConverterScreen">
+      <div class="page-head">
+        <div class="page-kicker" style="color:#c78414;">COMPANY DATA FORMATTER</div>
+        <h1>업체 데이터 변환기</h1>
+        <p>복사한 데이터를 붙여넣으면 업체별 한 줄 형식으로 자동 정리됩니다.</p>
+      </div>
+
+      <div class="company-tool-wrap">
+        <div class="company-tool-grid">
+          <section class="company-tool-card">
+            <div class="company-tool-head">
+              <div class="company-tool-title">원본 데이터</div>
+              <div class="company-tool-count" id="companyInputCount">0건</div>
+            </div>
+            <div class="company-tool-body">
+              <textarea
+                id="companyInput"
+                class="company-tool-textarea"
+                spellcheck="false"
+                placeholder="변환할 데이터를 붙여넣어 주세요."
+              ></textarea>
+
+              <div class="company-tool-actions">
+                <button type="button" class="action-btn" id="companyConvertBtn" style="background:#d89829;">변환하기</button>
+                <button type="button" class="action-btn btn-gray" id="companyClearBtn">전체 지우기</button>
+              </div>
+
+              <div class="company-tool-status" id="companyInputStatus"></div>
+            </div>
+          </section>
+
+          <section class="company-tool-card">
+            <div class="company-tool-head">
+              <div class="company-tool-title">변환 결과</div>
+              <div class="company-tool-count" id="companyOutputCount">0건</div>
+            </div>
+            <div class="company-tool-body">
+              <textarea
+                id="companyOutput"
+                class="company-tool-textarea"
+                spellcheck="false"
+                readonly
+                placeholder="변환된 결과가 여기에 표시됩니다."
+              ></textarea>
+
+              <div class="company-tool-actions">
+                <button type="button" class="action-btn" id="companyCopyBtn" style="background:#d89829;">전체 복사</button>
+                <button type="button" class="action-btn btn-gray" id="companyDownloadBtn">TXT 저장</button>
+              </div>
+
+              <div class="company-tool-status" id="companyOutputStatus"></div>
+            </div>
+          </section>
+        </div>
+
+        <div class="company-tool-notice">
+          ※ 탭 또는 큰 간격으로 나뉜 열은 <b> / </b>로 변환됩니다.<br>
+          ※ 큰따옴표 안에서 줄바꿈된 품번은 <b>, </b>로 이어집니다.<br>
+          ※ 금액의 쉼표와 회사명의 일반 띄어쓰기는 그대로 유지됩니다.
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+/* 화면 전환 */
+const screens = [...document.querySelectorAll(".screen")];
+const homeBtn = null;
+
+function showScreen(screenId){
+  screens.forEach(screen => {
+    screen.classList.toggle("active", screen.id === screenId);
+  });
+
+  document.querySelectorAll(".side-nav-btn").forEach(button => {
+    button.classList.toggle("active",button.dataset.open === screenId);
+  });
+
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+document.querySelectorAll("[data-open]").forEach(button => {
+  button.addEventListener("click", () => showScreen(button.dataset.open));
+});
+
+
+
+/* PDF → PNG */
+const pdfInput = document.getElementById("pdfInput");
+const dropArea = document.getElementById("dropArea");
+const groups = document.getElementById("groups");
+const emptyBox = document.getElementById("emptyBox");
+const statusText = document.getElementById("statusText");
+const progress = document.getElementById("progress");
+const progressBar = document.getElementById("progressBar");
+const scaleSelect = document.getElementById("scaleSelect");
+const bgSelect = document.getElementById("bgSelect");
+const zipBtn = document.getElementById("zipBtn");
+const clearAllBtn = document.getElementById("clearAllBtn");
+
+let allPages = [];
+let groupCount = 0;
+let isConverting = false;
+
+dropArea.addEventListener("click", () => {
+  if (!isConverting) pdfInput.click();
+});
+
+dropArea.addEventListener("dragover", event => {
+  event.preventDefault();
+  if (!isConverting) dropArea.classList.add("dragover");
+});
+
+dropArea.addEventListener("dragleave", () => {
+  dropArea.classList.remove("dragover");
+});
+
+dropArea.addEventListener("drop", event => {
+  event.preventDefault();
+  dropArea.classList.remove("dragover");
+
+  if (isConverting) return;
+
+  const files = [...event.dataTransfer.files].filter(isPDFFile);
+  if (!files.length) {
+    alert("PDF 파일만 업로드할 수 있습니다.");
+    return;
+  }
+
+  handleFiles(files);
+});
+
+pdfInput.addEventListener("change", event => {
+  const files = [...event.target.files].filter(isPDFFile);
+  if (files.length) handleFiles(files);
+  pdfInput.value = "";
+});
+
+function isPDFFile(file){
+  return file.type === "application/pdf" || /\.pdf$/i.test(file.name);
+}
+
+async function handleFiles(files){
+  if (isConverting || !files.length) return;
+
+  isConverting = true;
+  pdfInput.disabled = true;
+  progress.style.display = "block";
+  progressBar.style.width = "0%";
+
+  let completedFiles = 0;
+  let failedFiles = 0;
+
+  for (let index = 0; index < files.length; index++){
+    const file = files[index];
+    statusText.textContent = `${index + 1} / ${files.length}번째 PDF 변환 중: ${file.name}`;
+
+    try{
+      await convertPDF(file, index, files.length);
+      completedFiles++;
+    }catch(error){
+      failedFiles++;
+      console.error(error);
+      createFailedGroup(file.name, error);
+    }
+  }
+
+  progressBar.style.width = "100%";
+  isConverting = false;
+  pdfInput.disabled = false;
+
+  if (failedFiles){
+    statusText.innerHTML = `<span class="error-text">${completedFiles}개 변환 완료, ${failedFiles}개 변환 실패</span> · 현재 PNG ${allPages.length}개`;
+  }else{
+    statusText.textContent = `변환 완료! 현재 남아있는 PNG: ${allPages.length}개`;
+  }
+
+  updateButtons();
+}
+
+async function convertPDF(file, fileIndex, totalFiles){
+  groupCount++;
+
+  const groupId = `group_${Date.now()}_${groupCount}`;
+  const cleanName = file.name.replace(/\.pdf$/i,"");
+  const scale = Number(scaleSelect.value);
+  const bgMode = bgSelect.value;
+
+  const groupEl = document.createElement("section");
+  groupEl.className = "group";
+  groupEl.dataset.groupId = groupId;
+
+  groupEl.innerHTML = `
+    <div class="group-head">
+      <div>
+        <div class="group-title">${escapeHTML(file.name)}</div>
+        <div class="group-meta">변환 준비 중</div>
+      </div>
+      <div class="group-actions">
+        <button type="button" class="action-btn btn-gray groupZipBtn" disabled>이 PDF ZIP</button>
+        <button type="button" class="action-btn btn-danger groupDeleteBtn">이 PDF 삭제</button>
+      </div>
+    </div>
+    <div class="result"></div>
+  `;
+
+  groups.prepend(groupEl);
+  emptyBox.style.display = "none";
+
+  const meta = groupEl.querySelector(".group-meta");
+  const result = groupEl.querySelector(".result");
+  const groupZipBtn = groupEl.querySelector(".groupZipBtn");
+  const groupDeleteBtn = groupEl.querySelector(".groupDeleteBtn");
+
+  groupDeleteBtn.addEventListener("click", () => deleteGroup(groupId));
+  groupZipBtn.addEventListener("click", () => downloadGroupZip(groupId, cleanName, groupZipBtn));
+
+  try{
+    const arrayBuffer = await file.arrayBuffer();
+    const loadingTask = pdfjsLib.getDocument({data:arrayBuffer});
+    const pdf = await loadingTask.promise;
+
+    meta.textContent = `총 ${pdf.numPages}페이지 변환 중`;
+
+    for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++){
+      const page = await pdf.getPage(pageNumber);
+      const viewport = page.getViewport({scale});
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d",{alpha:bgMode === "transparent"});
+
+      canvas.width = Math.ceil(viewport.width);
+      canvas.height = Math.ceil(viewport.height);
+
+      if (bgMode === "white"){
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+      }
+
+      await page.render({
+        canvasContext:ctx,
+        viewport
+      }).promise;
+
+      const dataUrl = canvas.toDataURL("image/png");
+      const pageId = `page_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+
+      const item = {
+        id:pageId,
+        groupId,
+        pdfName:cleanName,
+        pageNumber,
+        dataUrl,
+        fileName:`${cleanName}_page_${String(pageNumber).padStart(2,"0")}.png`
+      };
+
+      allPages.push(item);
+      createPageCard(result,item);
+
+      const pageRatio = pageNumber / pdf.numPages;
+      const totalRatio = (fileIndex + pageRatio) / totalFiles;
+      progressBar.style.width = `${Math.round(totalRatio * 100)}%`;
+      statusText.textContent = `${file.name} · ${pageNumber} / ${pdf.numPages}페이지 변환 완료`;
+      meta.textContent = `${pageNumber} / ${pdf.numPages}페이지 변환 완료`;
+
+      page.cleanup();
+      canvas.width = 1;
+      canvas.height = 1;
+    }
+
+    meta.textContent = `PNG ${pdf.numPages}개 생성됨`;
+    groupZipBtn.disabled = false;
+    await pdf.destroy();
+  }catch(error){
+    groupEl.remove();
+    allPages = allPages.filter(item => item.groupId !== groupId);
+    throw error;
+  }
+}
+
+function createFailedGroup(fileName,error){
+  const groupEl = document.createElement("section");
+  groupEl.className = "group";
+  groupEl.innerHTML = `
+    <div class="group-head">
+      <div>
+        <div class="group-title">${escapeHTML(fileName)}</div>
+        <div class="group-meta error-text">PDF를 읽지 못했습니다. 암호가 걸렸거나 파일이 손상되었을 수 있습니다.</div>
+      </div>
+      <div class="group-actions">
+        <button type="button" class="action-btn btn-danger failedDeleteBtn">목록 삭제</button>
+      </div>
+    </div>
+  `;
+  groupEl.querySelector(".failedDeleteBtn").addEventListener("click",() => {
+    groupEl.remove();
+    updateButtons();
+  });
+  groups.prepend(groupEl);
+  emptyBox.style.display = "none";
+}
+
+function createPageCard(container,item){
+  const card = document.createElement("div");
+  card.className = "card";
+  card.dataset.pageId = item.id;
+
+  card.innerHTML = `
+    <div class="preview">
+      <img src="${item.dataUrl}" alt="${item.pageNumber}페이지 미리보기">
+    </div>
+    <div class="card-body">
+      <div class="page-title">${item.pageNumber}페이지</div>
+      <div class="card-actions">
+        <button type="button" class="action-btn btn-gray downloadBtn">저장</button>
+        <button type="button" class="action-btn btn-danger deleteBtn">삭제</button>
+      </div>
+    </div>
+  `;
+
+  card.querySelector(".downloadBtn").addEventListener("click",() => {
+    downloadDataUrl(item.dataUrl,item.fileName);
+  });
+
+  card.querySelector(".deleteBtn").addEventListener("click",() => {
+    deletePage(item.id);
+  });
+
+  container.appendChild(card);
+}
+
+function deletePage(pageId){
+  const page = allPages.find(item => item.id === pageId);
+  if (!page) return;
+
+  allPages = allPages.filter(item => item.id !== pageId);
+
+  const card = document.querySelector(`[data-page-id="${CSS.escape(pageId)}"]`);
+  if (card) card.remove();
+
+  const groupEl = document.querySelector(`[data-group-id="${CSS.escape(page.groupId)}"]`);
+  if (groupEl){
+    const remaining = allPages.filter(item => item.groupId === page.groupId);
+    const meta = groupEl.querySelector(".group-meta");
+    const groupZipBtn = groupEl.querySelector(".groupZipBtn");
+
+    if (!remaining.length){
+      groupEl.remove();
+    }else{
+      meta.textContent = `남아있는 PNG ${remaining.length}개`;
+      groupZipBtn.disabled = false;
+    }
+  }
+
+  updateButtons();
+}
+
+function deleteGroup(groupId){
+  allPages = allPages.filter(item => item.groupId !== groupId);
+
+  const groupEl = document.querySelector(`[data-group-id="${CSS.escape(groupId)}"]`);
+  if (groupEl) groupEl.remove();
+
+  updateButtons();
+}
+
+clearAllBtn.addEventListener("click",() => {
+  if (!allPages.length && !groups.children.length) return;
+
+  allPages = [];
+  groups.innerHTML = "";
+  progress.style.display = "none";
+  progressBar.style.width = "0%";
+  statusText.textContent = "모든 변환 결과를 삭제했습니다.";
+  updateButtons();
+});
+
+zipBtn.addEventListener("click",async() => {
+  if (!allPages.length) return;
+
+  const originalText = zipBtn.textContent;
+  zipBtn.disabled = true;
+  zipBtn.textContent = "ZIP 생성 중...";
+
+  try{
+    const zip = new JSZip();
+
+    for (const page of allPages){
+      const base64 = page.dataUrl.split(",")[1];
+      zip.file(`${sanitizeFolderName(page.pdfName)}/${page.fileName}`,base64,{base64:true});
+    }
+
+    const blob = await zip.generateAsync({type:"blob"});
+    downloadBlob(blob,"pdf_png_pages.zip");
+  }catch(error){
+    console.error(error);
+    alert("ZIP 파일 생성 중 오류가 발생했습니다.");
+  }finally{
+    zipBtn.textContent = originalText;
+    updateButtons();
+  }
+});
+
+async function downloadGroupZip(groupId,pdfName,button){
+  const pages = allPages.filter(item => item.groupId === groupId);
+  if (!pages.length) return;
+
+  const originalText = button.textContent;
+  button.disabled = true;
+  button.textContent = "ZIP 생성 중...";
+
+  try{
+    const zip = new JSZip();
+
+    for (const page of pages){
+      const base64 = page.dataUrl.split(",")[1];
+      zip.file(page.fileName,base64,{base64:true});
+    }
+
+    const blob = await zip.generateAsync({type:"blob"});
+    downloadBlob(blob,`${pdfName}_png_pages.zip`);
+  }catch(error){
+    console.error(error);
+    alert("ZIP 파일 생성 중 오류가 발생했습니다.");
+  }finally{
+    button.textContent = originalText;
+    button.disabled = !allPages.some(item => item.groupId === groupId);
+  }
+}
+
+function updateButtons(){
+  const hasPages = allPages.length > 0;
+  zipBtn.disabled = !hasPages || isConverting;
+  clearAllBtn.disabled = (!hasPages && !groups.children.length) || isConverting;
+  emptyBox.style.display = groups.children.length ? "none" : "block";
+
+  if (!hasPages && !groups.children.length && !isConverting){
+    statusText.textContent = "남아있는 PNG가 없습니다.";
+  }
+}
+
+function downloadDataUrl(dataUrl,filename){
+  const anchor = document.createElement("a");
+  anchor.href = dataUrl;
+  anchor.download = filename;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+}
+
+function downloadBlob(blob,filename){
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  setTimeout(() => URL.revokeObjectURL(url),1000);
+}
+
+function sanitizeFolderName(name){
+  return name.replace(/[\\/:*?"<>|]/g,"_").trim() || "PDF";
+}
+
+function escapeHTML(str){
+  return String(str).replace(/[&<>"']/g,match => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#039;"
+  }[match]));
+}
+
+/* 퍼센트 계산기 */
+const calcTabs = [...document.querySelectorAll(".calc-tab")];
+const calcContents = [...document.querySelectorAll(".calc-content")];
+
+calcTabs.forEach(tab => {
+  tab.addEventListener("click",() => {
+    calcTabs.forEach(item => item.classList.toggle("active",item === tab));
+    calcContents.forEach(content => {
+      content.classList.toggle("active",content.id === tab.dataset.calcTab);
+    });
+  });
+});
+
+const baseAmount = document.getElementById("baseAmount");
+const percentAmount = document.getElementById("percentAmount");
+const totalAmount = document.getElementById("totalAmount");
+const partAmount = document.getElementById("partAmount");
+
+const amountResult = document.getElementById("amountResult");
+const amountDesc = document.getElementById("amountDesc");
+const ratioResult = document.getElementById("ratioResult");
+const ratioDesc = document.getElementById("ratioDesc");
+
+[baseAmount,percentAmount,totalAmount,partAmount].forEach(input => {
+  input.addEventListener("input",() => {
+    const cursorAtEnd = input.selectionStart === input.value.length;
+    input.value = formatEditableNumber(input.value);
+    if (cursorAtEnd){
+      requestAnimationFrame(() => input.setSelectionRange(input.value.length,input.value.length));
+    }
+
+    calculateAmountPercent();
+    calculateRatioPercent();
+  });
+
+  input.addEventListener("blur",() => {
+    const value = parseNumber(input.value);
+    input.value = Number.isFinite(value) && input.value !== "" ? formatInputFinal(value) : "";
+  });
+});
+
+function calculateAmountPercent(){
+  const amount = parseNumber(baseAmount.value);
+  const percent = parseNumber(percentAmount.value);
+
+  if (!Number.isFinite(amount) || !Number.isFinite(percent)){
+    amountResult.textContent = "0원";
+    amountDesc.textContent = "금액과 퍼센트를 입력해 주세요.";
+    return;
+  }
+
+  const result = amount * percent / 100;
+  amountResult.textContent = `${formatResultNumber(result)}원`;
+  amountDesc.textContent = `${formatResultNumber(amount)}원의 ${formatPercentNumber(percent)}%는 ${formatResultNumber(result)}원입니다.`;
+}
+
+function calculateRatioPercent(){
+  const total = parseNumber(totalAmount.value);
+  const part = parseNumber(partAmount.value);
+
+  if (!Number.isFinite(total) || !Number.isFinite(part)){
+    ratioResult.textContent = "0%";
+    ratioDesc.textContent = "기준 금액과 비교 금액을 입력해 주세요.";
+    return;
+  }
+
+  if (total === 0){
+    ratioResult.textContent = "계산 불가";
+    ratioDesc.textContent = "기준 금액은 0보다 커야 합니다.";
+    return;
+  }
+
+  const result = part / total * 100;
+  ratioResult.textContent = `${formatPercentNumber(result)}%`;
+  ratioDesc.textContent = `${formatResultNumber(part)}원은 ${formatResultNumber(total)}원의 ${formatPercentNumber(result)}%입니다.`;
+}
+
+document.getElementById("resetAmount").addEventListener("click",() => {
+  baseAmount.value = "";
+  percentAmount.value = "";
+  calculateAmountPercent();
+  baseAmount.focus();
+});
+
+document.getElementById("resetRatio").addEventListener("click",() => {
+  totalAmount.value = "";
+  partAmount.value = "";
+  calculateRatioPercent();
+  totalAmount.focus();
+});
+
+
+document.getElementById("copyAmount").addEventListener("click",async() => {
+  const text = amountResult.textContent.trim();
+
+  if (!text || text === "0원"){
+    alert("먼저 금액과 퍼센트를 입력해 주세요.");
+    return;
+  }
+
+  await copyResultText(text,document.getElementById("copyAmount"));
+});
+
+document.getElementById("copyRatio").addEventListener("click",async() => {
+  const text = ratioResult.textContent.trim();
+
+  if (!text || text === "0%" || text === "계산 불가"){
+    alert("먼저 기준 금액과 비교 금액을 입력해 주세요.");
+    return;
+  }
+
+  await copyResultText(text,document.getElementById("copyRatio"));
+});
+
+async function copyResultText(text,button){
+  const originalText = button.textContent;
+
+  try{
+    if (navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(text);
+    }else{
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      document.execCommand("copy");
+      textarea.remove();
+    }
+
+    button.textContent = "복사 완료";
+  }catch(error){
+    console.error(error);
+    alert("복사하지 못했습니다. 결과를 직접 선택해 복사해 주세요.");
+    return;
+  }
+
+  setTimeout(() => {
+    button.textContent = originalText;
+  },1200);
+}
+
+function parseNumber(value){
+  const normalized = String(value).replace(/,/g,"").trim();
+  if (!normalized || normalized === "-" || normalized === ".") return NaN;
+  const number = Number(normalized);
+  return Number.isFinite(number) ? number : NaN;
+}
+
+function formatEditableNumber(value){
+  let cleaned = String(value)
+    .replace(/,/g,"")
+    .replace(/[^\d.-]/g,"");
+
+  const negative = cleaned.startsWith("-");
+  cleaned = cleaned.replace(/-/g,"");
+
+  const firstDot = cleaned.indexOf(".");
+  if (firstDot !== -1){
+    cleaned = cleaned.slice(0,firstDot + 1) + cleaned.slice(firstDot + 1).replace(/\./g,"");
+  }
+
+  let [integerPart = "",decimalPart] = cleaned.split(".");
+  integerPart = integerPart.replace(/^0+(?=\d)/,"");
+
+  const grouped = integerPart
+    ? Number(integerPart).toLocaleString("ko-KR")
+    : "";
+
+  return `${negative ? "-" : ""}${grouped}${decimalPart !== undefined ? "." + decimalPart : ""}`;
+}
+
+function formatInputFinal(value){
+  return value.toLocaleString("ko-KR",{
+    maximumFractionDigits:6
+  });
+}
+
+function formatResultNumber(value){
+  return value.toLocaleString("ko-KR",{
+    maximumFractionDigits:2
+  });
+}
+
+function formatPercentNumber(value){
+  return value.toLocaleString("ko-KR",{
+    maximumFractionDigits:4
+  });
+}
+
+
+/* 한글 금액 계산기 */
+const koreanAmountInput = document.getElementById("koreanAmountInput");
+const koreanPercentInput = document.getElementById("koreanPercentInput");
+const koreanBaseNumber = document.getElementById("koreanBaseNumber");
+const koreanBaseText = document.getElementById("koreanBaseText");
+const koreanPercentLabel = document.getElementById("koreanPercentLabel");
+const koreanPercentNumber = document.getElementById("koreanPercentNumber");
+const koreanPercentText = document.getElementById("koreanPercentText");
+const koreanDocumentText = document.getElementById("koreanDocumentText");
+
+koreanAmountInput.addEventListener("input",() => {
+  koreanAmountInput.value = formatKoreanMoneyInput(koreanAmountInput.value);
+  updateKoreanAmountResults();
+});
+
+koreanPercentInput.addEventListener("input",() => {
+  koreanPercentInput.value = formatKoreanPercentInput(koreanPercentInput.value);
+  updateKoreanAmountResults();
+});
+
+koreanAmountInput.addEventListener("blur",() => {
+  const value = parseNumber(koreanAmountInput.value);
+  koreanAmountInput.value = Number.isFinite(value)
+    ? Math.max(0,Math.round(value)).toLocaleString("ko-KR")
+    : "";
+  updateKoreanAmountResults();
+});
+
+koreanPercentInput.addEventListener("blur",() => {
+  const value = parseNumber(koreanPercentInput.value);
+  koreanPercentInput.value = Number.isFinite(value)
+    ? value.toLocaleString("ko-KR",{maximumFractionDigits:6,useGrouping:false})
+    : "";
+  updateKoreanAmountResults();
+});
+
+function updateKoreanAmountResults(){
+  const amount = parseNumber(koreanAmountInput.value);
+  const percent = parseNumber(koreanPercentInput.value);
+  const percentDisplay = Number.isFinite(percent)
+    ? percent.toLocaleString("ko-KR",{maximumFractionDigits:6,useGrouping:false})
+    : "0";
+
+  koreanPercentLabel.textContent = `${percentDisplay}% 계산 금액`;
+
+  if (!Number.isFinite(amount) || amount < 0){
+    setKoreanAmountEmpty();
+    return;
+  }
+
+  const roundedAmount = Math.round(amount);
+  const calculated = Number.isFinite(percent)
+    ? Math.round(roundedAmount * percent / 100)
+    : 0;
+
+  koreanBaseNumber.textContent = `${roundedAmount.toLocaleString("ko-KR")}원`;
+  koreanBaseText.textContent = convertNumberToKoreanCurrency(roundedAmount);
+  koreanBaseText.classList.remove("placeholder");
+
+  if (Number.isFinite(percent)){
+    koreanPercentNumber.textContent = `${calculated.toLocaleString("ko-KR")}원`;
+    koreanPercentText.textContent = convertNumberToKoreanCurrency(calculated);
+    koreanPercentText.classList.remove("placeholder");
+
+    koreanDocumentText.textContent =
+      `${convertNumberToKoreanCurrency(calculated)}\n` +
+      `(₩ ${calculated.toLocaleString("ko-KR")}원 및 부가세 별도)`;
+    koreanDocumentText.classList.remove("placeholder");
+  }else{
+    koreanPercentNumber.textContent = "0원";
+    koreanPercentText.textContent = "퍼센트를 입력해 주세요.";
+    koreanPercentText.classList.add("placeholder");
+
+    koreanDocumentText.textContent = "퍼센트를 입력해 주세요.";
+    koreanDocumentText.classList.add("placeholder");
+  }
+}
+
+function setKoreanAmountEmpty(){
+  koreanBaseNumber.textContent = "0원";
+  koreanBaseText.textContent = "금액을 입력해 주세요.";
+  koreanBaseText.classList.add("placeholder");
+
+  koreanPercentNumber.textContent = "0원";
+  koreanPercentText.textContent = "금액을 입력해 주세요.";
+  koreanPercentText.classList.add("placeholder");
+
+  koreanDocumentText.textContent = "금액과 퍼센트를 입력해 주세요.";
+  koreanDocumentText.classList.add("placeholder");
+}
+
+function convertNumberToKoreanCurrency(value){
+  const number = Math.round(Number(value));
+
+  if (!Number.isFinite(number) || number < 0){
+    return "금액을 확인해 주세요.";
+  }
+
+  if (number === 0){
+    return "금 영원정";
+  }
+
+  const digits = ["","일","이","삼","사","오","육","칠","팔","구"];
+  const smallUnits = ["천","백","십",""];
+  const largeUnits = ["","만","억","조","경","해"];
+  const groups = [];
+  let remaining = number;
+
+  while (remaining > 0){
+    groups.push(remaining % 10000);
+    remaining = Math.floor(remaining / 10000);
+  }
+
+  if (groups.length > largeUnits.length){
+    return "표시 가능한 금액 범위를 초과했습니다.";
+  }
+
+  let result = "";
+
+  for (let groupIndex = groups.length - 1; groupIndex >= 0; groupIndex--){
+    const groupValue = groups[groupIndex];
+    if (groupValue === 0) continue;
+
+    const padded = String(groupValue).padStart(4,"0");
+    let groupText = "";
+
+    for (let index = 0; index < 4; index++){
+      const digit = Number(padded[index]);
+      if (digit === 0) continue;
+      groupText += digits[digit] + smallUnits[index];
+    }
+
+    result += groupText + largeUnits[groupIndex];
+  }
+
+  return `금 ${result}원정`;
+}
+
+function formatKoreanMoneyInput(value){
+  const digitsOnly = String(value).replace(/[^\d]/g,"");
+  if (!digitsOnly) return "";
+
+  const safe = digitsOnly.replace(/^0+(?=\d)/,"");
+  const number = Number(safe);
+
+  return Number.isFinite(number)
+    ? number.toLocaleString("ko-KR")
+    : safe;
+}
+
+function formatKoreanPercentInput(value){
+  let cleaned = String(value).replace(/[^\d.]/g,"");
+  const firstDot = cleaned.indexOf(".");
+
+  if (firstDot !== -1){
+    cleaned =
+      cleaned.slice(0,firstDot + 1) +
+      cleaned.slice(firstDot + 1).replace(/\./g,"");
+  }
+
+  return cleaned;
+}
+
+function hasKoreanBaseResult(){
+  return !koreanBaseText.classList.contains("placeholder");
+}
+
+function hasKoreanPercentResult(){
+  return !koreanPercentText.classList.contains("placeholder");
+}
+
+function stripKoreanCurrencyAffixes(text){
+  return String(text)
+    .replace(/^금\s*/,"")
+    .replace(/원정$/,"원")
+    .trim();
+}
+
+document.getElementById("copyKoreanBaseNumber").addEventListener("click",async event => {
+  if (!hasKoreanBaseResult()){
+    alert("먼저 금액을 입력해 주세요.");
+    return;
+  }
+  await copyResultText(koreanBaseNumber.textContent,event.currentTarget);
+});
+
+document.getElementById("copyKoreanBaseText").addEventListener("click",async event => {
+  if (!hasKoreanBaseResult()){
+    alert("먼저 금액을 입력해 주세요.");
+    return;
+  }
+  await copyResultText(stripKoreanCurrencyAffixes(koreanBaseText.textContent),event.currentTarget);
+});
+
+document.getElementById("copyKoreanPercentNumber").addEventListener("click",async event => {
+  if (!hasKoreanPercentResult()){
+    alert("먼저 금액과 퍼센트를 입력해 주세요.");
+    return;
+  }
+  await copyResultText(koreanPercentNumber.textContent,event.currentTarget);
+});
+
+document.getElementById("copyKoreanPercentText").addEventListener("click",async event => {
+  if (!hasKoreanPercentResult()){
+    alert("먼저 금액과 퍼센트를 입력해 주세요.");
+    return;
+  }
+  await copyResultText(stripKoreanCurrencyAffixes(koreanPercentText.textContent),event.currentTarget);
+});
+
+document.getElementById("copyKoreanDocument").addEventListener("click",async event => {
+  if (koreanDocumentText.classList.contains("placeholder")){
+    alert("먼저 금액과 퍼센트를 입력해 주세요.");
+    return;
+  }
+
+  await copyResultText(koreanDocumentText.textContent,event.currentTarget);
+});
+
+document.getElementById("copyKoreanAll").addEventListener("click",async event => {
+  if (!hasKoreanBaseResult()){
+    alert("먼저 금액을 입력해 주세요.");
+    return;
+  }
+
+  const text = [
+    "기준 금액",
+    koreanBaseNumber.textContent,
+    stripKoreanCurrencyAffixes(koreanBaseText.textContent),
+    "",
+    koreanPercentLabel.textContent,
+    koreanPercentNumber.textContent,
+    stripKoreanCurrencyAffixes(koreanPercentText.textContent)
+  ].join("\n");
+
+  await copyResultText(text,event.currentTarget);
+});
+
+document.getElementById("resetKoreanAmount").addEventListener("click",() => {
+  koreanAmountInput.value = "";
+  koreanPercentInput.value = "50";
+  updateKoreanAmountResults();
+  koreanAmountInput.focus();
+});
+
+updateKoreanAmountResults();
+
+
+/* 업체 데이터 변환기 */
+const companyInput = document.getElementById("companyInput");
+const companyOutput = document.getElementById("companyOutput");
+const companyInputCount = document.getElementById("companyInputCount");
+const companyOutputCount = document.getElementById("companyOutputCount");
+const companyInputStatus = document.getElementById("companyInputStatus");
+const companyOutputStatus = document.getElementById("companyOutputStatus");
+
+function normalizeCompanyLineBreaks(text){
+  return String(text).replace(/\r\n?/g,"\n");
+}
+
+function parseCompanyRows(raw){
+  const text = normalizeCompanyLineBreaks(raw).trim();
+  if (!text) return [];
+
+  const rows = [];
+  let current = "";
+  let inQuotes = false;
+
+  for (let index = 0; index < text.length; index++){
+    const character = text[index];
+
+    if (character === '"'){
+      if (inQuotes && text[index + 1] === '"'){
+        current += '"';
+        index++;
+      }else{
+        inQuotes = !inQuotes;
+      }
+      continue;
+    }
+
+    if (character === "\n"){
+      if (inQuotes){
+        current += "\n";
+      }else{
+        if (current.trim()) rows.push(current.trim());
+        current = "";
+      }
+      continue;
+    }
+
+    current += character;
+  }
+
+  if (current.trim()) rows.push(current.trim());
+  return rows;
+}
+
+function splitCompanyColumns(row){
+  const tabColumns = row
+    .split(/\t+/)
+    .map(value => value.trim())
+    .filter(Boolean);
+
+  if (tabColumns.length >= 4){
+    return [
+      tabColumns[0],
+      tabColumns[1],
+      tabColumns[2],
+      tabColumns.slice(3).join(" ")
+    ];
+  }
+
+  const spacedColumns = row
+    .split(/\s{2,}/)
+    .map(value => value.trim())
+    .filter(Boolean);
+
+  if (spacedColumns.length >= 4){
+    return [
+      spacedColumns[0],
+      spacedColumns[1],
+      spacedColumns[2],
+      spacedColumns.slice(3).join(" ")
+    ];
+  }
+
+  return null;
+}
+
+function cleanCompanyCodes(value){
+  return String(value)
+    .replace(/^"+|"+$/g,"")
+    .split(/\n+/)
+    .map(code => code.replace(/^"+|"+$/g,"").trim())
+    .filter(Boolean)
+    .join(", ");
+}
+
+function convertCompanyData(raw){
+  const rows = parseCompanyRows(raw);
+  const converted = [];
+  const failed = [];
+
+  rows.forEach((row,index) => {
+    const columns = splitCompanyColumns(row);
+
+    if (!columns){
+      failed.push(index + 1);
+      return;
+    }
+
+    const company = columns[0].trim();
+    const amount = columns[1].trim();
+    const payment = columns[2].trim();
+    const codes = cleanCompanyCodes(columns[3]);
+
+    if (!company || !amount || !payment || !codes){
+      failed.push(index + 1);
+      return;
+    }
+
+    converted.push(`${company} / ${amount} / ${payment} / ${codes}`);
+  });
+
+  return {rows,converted,failed};
+}
+
+function updateCompanyInputCount(){
+  companyInputCount.textContent = `${parseCompanyRows(companyInput.value).length}건`;
+}
+
+function runCompanyConversion(){
+  const result = convertCompanyData(companyInput.value);
+
+  companyOutput.value = result.converted.join("\n");
+  companyOutputCount.textContent = `${result.converted.length}건`;
+  companyInputStatus.className = "company-tool-status";
+  companyOutputStatus.className = "company-tool-status";
+
+  if (!companyInput.value.trim()){
+    companyInputStatus.textContent = "변환할 데이터를 붙여넣어 주세요.";
+    companyInputStatus.classList.add("error");
+    companyOutputStatus.textContent = "";
+    return;
+  }
+
+  if (result.failed.length){
+    companyInputStatus.textContent =
+      `${result.rows.length}건 중 ${result.failed.length}건의 형식을 확인해 주세요.`;
+    companyInputStatus.classList.add("error");
+
+    companyOutputStatus.textContent = `${result.converted.length}건이 변환되었습니다.`;
+    if (result.converted.length){
+      companyOutputStatus.classList.add("success");
+    }
+  }else{
+    companyInputStatus.textContent = `${result.rows.length}건의 원본 데이터를 확인했습니다.`;
+    companyInputStatus.classList.add("success");
+
+    companyOutputStatus.textContent = `${result.converted.length}건이 정상 변환되었습니다.`;
+    companyOutputStatus.classList.add("success");
+  }
+}
+
+document.getElementById("companyConvertBtn").addEventListener("click",runCompanyConversion);
+
+document.getElementById("companyClearBtn").addEventListener("click",() => {
+  companyInput.value = "";
+  companyOutput.value = "";
+  companyInputCount.textContent = "0건";
+  companyOutputCount.textContent = "0건";
+  companyInputStatus.textContent = "";
+  companyOutputStatus.textContent = "";
+  companyInput.focus();
+});
+
+document.getElementById("companyCopyBtn").addEventListener("click",async event => {
+  if (!companyOutput.value.trim()){
+    companyOutputStatus.textContent = "복사할 결과가 없습니다.";
+    companyOutputStatus.className = "company-tool-status error";
+    return;
+  }
+
+  await copyResultText(companyOutput.value,event.currentTarget);
+  companyOutputStatus.textContent = "변환 결과를 전체 복사했습니다.";
+  companyOutputStatus.className = "company-tool-status success";
+});
+
+document.getElementById("companyDownloadBtn").addEventListener("click",() => {
+  if (!companyOutput.value.trim()){
+    companyOutputStatus.textContent = "저장할 결과가 없습니다.";
+    companyOutputStatus.className = "company-tool-status error";
+    return;
+  }
+
+  const blob = new Blob(["\uFEFF" + companyOutput.value],{
+    type:"text/plain;charset=utf-8"
+  });
+
+  const now = new Date();
+  const pad = number => String(number).padStart(2,"0");
+  const fileName =
+    `업체데이터_${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_` +
+    `${pad(now.getHours())}${pad(now.getMinutes())}.txt`;
+
+  downloadBlob(blob,fileName);
+  companyOutputStatus.textContent = "TXT 파일로 저장했습니다.";
+  companyOutputStatus.className = "company-tool-status success";
+});
+
+companyInput.addEventListener("input",() => {
+  updateCompanyInputCount();
+
+  if (companyInput.value.trim()){
+    runCompanyConversion();
+  }else{
+    companyOutput.value = "";
+    companyInputCount.textContent = "0건";
+    companyOutputCount.textContent = "0건";
+    companyInputStatus.textContent = "";
+    companyOutputStatus.textContent = "";
+  }
+});
+
+companyInput.addEventListener("paste",() => {
+  setTimeout(() => {
+    updateCompanyInputCount();
+    runCompanyConversion();
+  },0);
+});
+
+
+</script>
+</body>
+</html>
