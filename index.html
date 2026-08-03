@@ -1088,6 +1088,92 @@ select{
   }
 }
 
+
+.brand-easteregg{
+  width:100%;
+  border:0;
+  background:transparent;
+  text-align:left;
+  cursor:pointer;
+  border-radius:12px;
+  transition:.16s ease;
+}
+
+.brand-easteregg:hover{
+  background:rgba(255,255,255,.055);
+}
+
+.brand-easteregg:focus-visible{
+  outline:2px solid #5f7de5;
+  outline-offset:3px;
+}
+
+.home-image-only img{
+  width:min(58vw,560px);
+  max-height:70vh;
+}
+
+@media(max-width:980px){
+  .brand-easteregg{
+    width:auto;
+  }
+
+  .home-image-only img{
+    width:min(76vw,520px);
+    max-height:66vh;
+  }
+}
+
+@media(max-width:560px){
+  .home-image-only img{
+    width:min(88vw,400px);
+    max-height:62vh;
+  }
+}
+
+
+.rest-image-only{
+  min-height:calc(100vh - 68px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:40px;
+}
+
+.rest-image-only img{
+  display:block;
+  width:min(62vw,620px);
+  max-height:74vh;
+  object-fit:contain;
+  border-radius:24px;
+  box-shadow:0 24px 70px rgba(38,52,79,.18);
+}
+
+@media(max-width:980px){
+  .rest-image-only{
+    min-height:calc(100vh - 110px);
+    padding:28px 20px;
+  }
+
+  .rest-image-only img{
+    width:min(80vw,560px);
+    max-height:68vh;
+  }
+}
+
+@media(max-width:560px){
+  .rest-image-only{
+    min-height:calc(100vh - 128px);
+    padding:20px 10px;
+  }
+
+  .rest-image-only img{
+    width:min(92vw,420px);
+    max-height:64vh;
+    border-radius:18px;
+  }
+}
+
 </style>
 
 </head>
@@ -1095,13 +1181,13 @@ select{
 <body>
 <div class="app">
   <div class="topbar">
-    <div class="brand">
+    <button type="button" class="brand brand-easteregg" id="brandEasterEgg" aria-label="휴식 화면 열기">
       <div class="brand-mark">N</div>
       <div>
         <div class="brand-name">나루 도구함</div>
         <div class="brand-sub">파일 변환과 간단한 계산을 한곳에서</div>
       </div>
-    </div>
+    </button>
 
     <nav class="side-nav" aria-label="도구 메뉴">
       <button type="button" class="side-nav-btn active" data-open="homeScreen">
@@ -1138,7 +1224,14 @@ select{
   <main>
     <section class="screen active" id="homeScreen">
       <div class="home-image-only">
-        <img src="https://i.ibb.co/NdQDfbH3/Chat-GPT-Image-2026-8-3-10-56-14-removebg-preview.png" alt="나루 도구함 캐릭터">
+        <img src="https://i.ibb.co/SXY2hYdt/Chat-GPT-Image-2026-8-3-11-26-08.png" alt="나루 도구함 캐릭터">
+      </div>
+    </section>
+
+
+    <section class="screen" id="restScreen">
+      <div class="rest-image-only">
+        <img src="https://i.ibb.co/spDnmxcD/Chat-GPT-Image-2026-8-3-11-24-55.png" alt="게임하며 쉬는 캐릭터">
       </div>
     </section>
 
@@ -2490,6 +2583,15 @@ companyInput.addEventListener("paste",() => {
   },0);
 });
 
+
+
+
+/* 왼쪽 상단 로고 휴식 화면 */
+const brandEasterEgg = document.getElementById("brandEasterEgg");
+
+brandEasterEgg.addEventListener("click",() => {
+  showScreen("restScreen");
+});
 
 </script>
 </body>
