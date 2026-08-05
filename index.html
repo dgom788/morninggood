@@ -1368,6 +1368,8 @@ select{
   }
 }
 
+
+.extract-tabs{grid-template-columns:repeat(2,1fr)}
 </style>
 
 </head>
@@ -1408,9 +1410,14 @@ select{
         <span>업체 데이터 변환기</span>
       </button>
 
-      <button type="button" class="side-nav-btn" data-open="textCleanerScreen">
+      <button type="button" class="side-nav-btn" data-open="freedermaScreen">
+        <span class="side-nav-icon">F</span>
+        <span>프리더마</span>
+      </button>
+
+      <button type="button" class="side-nav-btn" data-open="textExtractScreen">
         <span class="side-nav-icon">T</span>
-        <span>텍스트 정리</span>
+        <span>텍스트 추출</span>
       </button>
     </nav>
 
@@ -1702,63 +1709,76 @@ select{
 
 
 
-    <section class="screen" id="textCleanerScreen">
+    
+    <section class="screen" id="freedermaScreen">
       <div class="page-head">
-        <div class="page-kicker" style="color:#7c3aed;">TEXT CLEANER</div>
-        <h1>텍스트 정리</h1>
-        <p>텍스트 조합과 국문·영문 추출을 한 화면에서 처리합니다.</p>
+        <div class="page-kicker" style="color:#7c3aed;">FREEDERMA FORMATTER</div>
+        <h1>프리더마</h1>
+        <p>업체와 내용을 같은 줄끼리 묶어 자동으로 출력합니다.</p>
       </div>
 
       <div class="text-cleaner-wrap">
-        <div class="text-tool-tabs">
-          <button type="button" class="text-tool-tab active" data-text-tool="textEditTool">프리더마</button>
-          <button type="button" class="text-tool-tab" data-text-tool="koreanExtractTool">국문 추출</button>
-          <button type="button" class="text-tool-tab" data-text-tool="englishExtractTool">영문 추출</button>
-        </div>
-
-        <section class="text-tool-content active" id="textEditTool">
-          <div class="text-cleaner-grid">
-            <section class="text-cleaner-card">
-              <div class="text-cleaner-head">
-                <div class="text-cleaner-title">A · 업체</div>
-                <div class="text-cleaner-count" id="textEditNameCount">0건</div>
-              </div>
-              <div class="text-cleaner-body">
-                <textarea id="textEditNames" class="text-cleaner-textarea" spellcheck="false" placeholder="업체를 줄마다 입력해 주세요."></textarea>
-              </div>
-            </section>
-
-            <section class="text-cleaner-card">
-              <div class="text-cleaner-head">
-                <div class="text-cleaner-title">B · 내용</div>
-                <div class="text-cleaner-count" id="textEditContentCount">0건</div>
-              </div>
-              <div class="text-cleaner-body">
-                <textarea id="textEditContents" class="text-cleaner-textarea" spellcheck="false" placeholder="업체 뒤에 붙일 내용을 줄마다 입력해 주세요."></textarea>
-              </div>
-            </section>
-          </div>
-
-          <section class="text-cleaner-card text-cleaner-output-card">
+        <div class="text-cleaner-grid">
+          <section class="text-cleaner-card">
             <div class="text-cleaner-head">
-              <div class="text-cleaner-title">출력 결과</div>
-              <div class="text-cleaner-count" id="textEditOutputCount">0건</div>
+              <div class="text-cleaner-title">A · 업체</div>
+              <div class="text-cleaner-count" id="freedermaNameCount">0건</div>
             </div>
             <div class="text-cleaner-body">
-              <textarea id="textEditOutput" class="text-cleaner-textarea text-cleaner-output" spellcheck="false" readonly placeholder="(업체) 내용 형식으로 결과가 표시됩니다."></textarea>
-
-              <div class="text-cleaner-actions">
-                <button type="button" class="action-btn" id="textEditCopyBtn" style="background:#7c3aed;">전체 복사</button>
-                <button type="button" class="action-btn btn-gray" id="textEditDownloadBtn">TXT 저장</button>
-                <button type="button" class="action-btn btn-danger" id="textEditClearBtn">전체 초기화</button>
-              </div>
-
-              <div class="text-cleaner-status" id="textEditStatus"></div>
+              <textarea id="freedermaNames" class="text-cleaner-textarea" spellcheck="false" placeholder="업체를 줄마다 입력해 주세요."></textarea>
             </div>
           </section>
+
+          <section class="text-cleaner-card">
+            <div class="text-cleaner-head">
+              <div class="text-cleaner-title">B · 내용</div>
+              <div class="text-cleaner-count" id="freedermaContentCount">0건</div>
+            </div>
+            <div class="text-cleaner-body">
+              <textarea id="freedermaContents" class="text-cleaner-textarea" spellcheck="false" placeholder="업체 뒤에 붙일 내용을 줄마다 입력해 주세요."></textarea>
+            </div>
+          </section>
+        </div>
+
+        <section class="text-cleaner-card text-cleaner-output-card">
+          <div class="text-cleaner-head">
+            <div class="text-cleaner-title">출력 결과</div>
+            <div class="text-cleaner-count" id="freedermaOutputCount">0건</div>
+          </div>
+          <div class="text-cleaner-body">
+            <textarea id="freedermaOutput" class="text-cleaner-textarea text-cleaner-output" readonly placeholder="(업체) 내용 형식으로 결과가 표시됩니다."></textarea>
+
+            <div class="text-cleaner-actions">
+              <button type="button" class="action-btn" id="freedermaCopyBtn" style="background:#7c3aed;">전체 복사</button>
+              <button type="button" class="action-btn btn-gray" id="freedermaDownloadBtn">TXT 저장</button>
+              <button type="button" class="action-btn btn-danger" id="freedermaClearBtn">전체 초기화</button>
+            </div>
+            <div class="text-cleaner-status" id="freedermaStatus"></div>
+          </div>
         </section>
 
-        <section class="text-tool-content" id="koreanExtractTool">
+        <div class="notice">
+          ※ A와 B의 같은 줄끼리 조합됩니다.<br>
+          ※ 빈 줄은 자동으로 제외됩니다.<br>
+          ※ 줄 수가 다르면 부족한 쪽과 개수를 표시합니다.
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="textExtractScreen">
+      <div class="page-head">
+        <div class="page-kicker" style="color:#7c3aed;">TEXT EXTRACTOR</div>
+        <h1>텍스트 추출</h1>
+        <p>국문·영문 표시가 있거나 없어도 내용을 자동으로 구분합니다.</p>
+      </div>
+
+      <div class="text-cleaner-wrap">
+        <div class="text-tool-tabs extract-tabs">
+          <button type="button" class="text-tool-tab active" data-extract-tool="koreanExtractTool">국문 버전</button>
+          <button type="button" class="text-tool-tab" data-extract-tool="englishExtractTool">영문 버전</button>
+        </div>
+
+        <section class="text-tool-content active" id="koreanExtractTool">
           <div class="text-cleaner-options">
             <label class="text-cleaner-option"><input type="checkbox" id="koreanRemoveQuotes" checked>큰따옴표 제거</label>
             <label class="text-cleaner-option"><input type="checkbox" id="koreanRemoveDuplicate">중복 제거</label>
@@ -1771,7 +1791,7 @@ select{
                 <div class="text-cleaner-count" id="koreanInputCount">0줄</div>
               </div>
               <div class="text-cleaner-body">
-                <textarea id="koreanInput" class="text-cleaner-textarea" spellcheck="false" placeholder="국문: 제품명&#10;영문: Product Name"></textarea>
+                <textarea id="koreanInput" class="text-cleaner-textarea" spellcheck="false" placeholder="국문/영문 데이터를 그대로 붙여넣어 주세요."></textarea>
               </div>
             </section>
 
@@ -1781,14 +1801,13 @@ select{
                 <div class="text-cleaner-count" id="koreanOutputCount">0건</div>
               </div>
               <div class="text-cleaner-body">
-                <textarea id="koreanOutput" class="text-cleaner-textarea" spellcheck="false" readonly></textarea>
+                <textarea id="koreanOutput" class="text-cleaner-textarea" readonly placeholder="한글이 포함된 제품명이 표시됩니다."></textarea>
 
                 <div class="text-cleaner-actions">
                   <button type="button" class="action-btn" id="koreanCopyBtn" style="background:#7c3aed;">전체 복사</button>
                   <button type="button" class="action-btn btn-gray" id="koreanDownloadBtn">TXT 저장</button>
                   <button type="button" class="action-btn btn-danger" id="koreanClearBtn">전체 초기화</button>
                 </div>
-
                 <div class="text-cleaner-status" id="koreanStatus"></div>
               </div>
             </section>
@@ -1808,7 +1827,7 @@ select{
                 <div class="text-cleaner-count" id="englishInputCount">0줄</div>
               </div>
               <div class="text-cleaner-body">
-                <textarea id="englishInput" class="text-cleaner-textarea" spellcheck="false" placeholder="국문: 제품명&#10;영문: Product Name"></textarea>
+                <textarea id="englishInput" class="text-cleaner-textarea" spellcheck="false" placeholder="국문/영문 데이터를 그대로 붙여넣어 주세요."></textarea>
               </div>
             </section>
 
@@ -1818,14 +1837,13 @@ select{
                 <div class="text-cleaner-count" id="englishOutputCount">0건</div>
               </div>
               <div class="text-cleaner-body">
-                <textarea id="englishOutput" class="text-cleaner-textarea" spellcheck="false" readonly></textarea>
+                <textarea id="englishOutput" class="text-cleaner-textarea" readonly placeholder="영문 제품명이 표시됩니다."></textarea>
 
                 <div class="text-cleaner-actions">
                   <button type="button" class="action-btn" id="englishCopyBtn" style="background:#7c3aed;">전체 복사</button>
                   <button type="button" class="action-btn btn-gray" id="englishDownloadBtn">TXT 저장</button>
                   <button type="button" class="action-btn btn-danger" id="englishClearBtn">전체 초기화</button>
                 </div>
-
                 <div class="text-cleaner-status" id="englishStatus"></div>
               </div>
             </section>
@@ -1833,12 +1851,12 @@ select{
         </section>
 
         <div class="notice">
-          ※ 텍스트 수정은 A와 B의 같은 줄끼리 조합합니다.<br>
-          ※ 국문 추출은 ‘국문:’ 뒤의 내용만, 영문 추출은 ‘영문:’ 뒤의 내용만 남깁니다.
+          ※ ‘국문:’·‘영문:’이 있으면 해당 표시 뒤의 내용을 추출합니다.<br>
+          ※ 표시가 없으면 한글이 포함된 줄은 국문, 한글 없이 영문자가 포함된 줄은 영문으로 자동 구분합니다.<br>
+          ※ 큰따옴표와 빈 줄은 자동으로 정리됩니다.
         </div>
       </div>
     </section>
-
 
   </main>
 </div>
@@ -2934,217 +2952,164 @@ brandEasterEgg.addEventListener("click",() => {
 
 
 
-/* 텍스트 정리 */
-const textToolTabs = [...document.querySelectorAll(".text-tool-tab")];
-const textToolContents = [...document.querySelectorAll(".text-tool-content")];
 
-textToolTabs.forEach(tab => {
-  tab.addEventListener("click",() => {
-    textToolTabs.forEach(item => item.classList.toggle("active",item === tab));
-    textToolContents.forEach(content => {
-      content.classList.toggle("active",content.id === tab.dataset.textTool);
-    });
-  });
-});
 
-function getTextCleanerLines(value){
-  return String(value)
-    .replace(/\r\n?/g,"\n")
-    .split("\n")
-    .map(line => line.trim())
-    .filter(Boolean);
+/* 프리더마 */
+const freedermaNames = document.getElementById("freedermaNames");
+const freedermaContents = document.getElementById("freedermaContents");
+const freedermaOutput = document.getElementById("freedermaOutput");
+const freedermaNameCount = document.getElementById("freedermaNameCount");
+const freedermaContentCount = document.getElementById("freedermaContentCount");
+const freedermaOutputCount = document.getElementById("freedermaOutputCount");
+const freedermaStatus = document.getElementById("freedermaStatus");
+
+function cleanLines(value){
+  return String(value).replace(/\r\n?/g,"\n").split("\n").map(line=>line.trim()).filter(Boolean);
 }
 
-/* 텍스트 수정 */
-const textEditNames = document.getElementById("textEditNames");
-const textEditContents = document.getElementById("textEditContents");
-const textEditOutput = document.getElementById("textEditOutput");
-const textEditNameCount = document.getElementById("textEditNameCount");
-const textEditContentCount = document.getElementById("textEditContentCount");
-const textEditOutputCount = document.getElementById("textEditOutputCount");
-const textEditStatus = document.getElementById("textEditStatus");
-
-function updateTextEdit(){
-  const names = getTextCleanerLines(textEditNames.value);
-  const contents = getTextCleanerLines(textEditContents.value);
+function updateFreederma(){
+  const names = cleanLines(freedermaNames.value);
+  const contents = cleanLines(freedermaContents.value);
   const count = Math.min(names.length,contents.length);
   const results = [];
 
-  for(let index = 0; index < count; index++){
-    results.push(`(${names[index]}) ${contents[index]}`);
-  }
+  for(let i=0;i<count;i++) results.push(`(${names[i]}) ${contents[i]}`);
 
-  textEditOutput.value = results.join("\n");
-  textEditNameCount.textContent = `${names.length}건`;
-  textEditContentCount.textContent = `${contents.length}건`;
-  textEditOutputCount.textContent = `${results.length}건`;
-  textEditStatus.className = "text-cleaner-status";
+  freedermaOutput.value = results.join("\n");
+  freedermaNameCount.textContent = `${names.length}건`;
+  freedermaContentCount.textContent = `${contents.length}건`;
+  freedermaOutputCount.textContent = `${results.length}건`;
+  freedermaStatus.className = "text-cleaner-status";
 
   if(!names.length && !contents.length){
-    textEditStatus.textContent = "";
-  }else if(!names.length){
-    textEditStatus.textContent = "A 업체를 입력해 주세요.";
-    textEditStatus.classList.add("error");
-  }else if(!contents.length){
-    textEditStatus.textContent = "B 내용을 입력해 주세요.";
-    textEditStatus.classList.add("error");
-  }else if(names.length !== contents.length){
-    const difference = Math.abs(names.length - contents.length);
+    freedermaStatus.textContent = "";
+  }else if(!names.length || !contents.length || names.length !== contents.length){
     const shortage = names.length < contents.length ? "A 업체" : "B 내용";
-    textEditStatus.textContent = `${shortage}이 ${difference}건 부족합니다. 현재 ${results.length}건까지만 출력되었습니다.`;
-    textEditStatus.classList.add("error");
+    const diff = Math.abs(names.length-contents.length);
+    freedermaStatus.textContent = diff ? `${shortage}이 ${diff}건 부족합니다.` : "A와 B를 모두 입력해 주세요.";
+    freedermaStatus.classList.add("error");
   }else{
-    textEditStatus.textContent = `${results.length}건이 정상 조합되었습니다.`;
-    textEditStatus.classList.add("success");
+    freedermaStatus.textContent = `${results.length}건이 정상 조합되었습니다.`;
+    freedermaStatus.classList.add("success");
   }
 }
 
-textEditNames.addEventListener("input",updateTextEdit);
-textEditContents.addEventListener("input",updateTextEdit);
+freedermaNames.addEventListener("input",updateFreederma);
+freedermaContents.addEventListener("input",updateFreederma);
 
-document.getElementById("textEditCopyBtn").addEventListener("click",async event => {
-  if(!textEditOutput.value.trim()){
-    textEditStatus.textContent = "복사할 결과가 없습니다.";
-    textEditStatus.className = "text-cleaner-status error";
-    return;
+document.getElementById("freedermaCopyBtn").addEventListener("click",async e=>{
+  if(!freedermaOutput.value.trim()) return;
+  await copyResultText(freedermaOutput.value,e.currentTarget);
+});
+
+document.getElementById("freedermaDownloadBtn").addEventListener("click",()=>{
+  if(!freedermaOutput.value.trim()) return;
+  downloadBlob(new Blob(["\uFEFF"+freedermaOutput.value],{type:"text/plain;charset=utf-8"}),"프리더마.txt");
+});
+
+document.getElementById("freedermaClearBtn").addEventListener("click",()=>{
+  freedermaNames.value="";
+  freedermaContents.value="";
+  updateFreederma();
+});
+
+/* 텍스트 추출 내부 탭 */
+const extractTabs=[...document.querySelectorAll("[data-extract-tool]")];
+extractTabs.forEach(tab=>tab.addEventListener("click",()=>{
+  extractTabs.forEach(item=>item.classList.toggle("active",item===tab));
+  ["koreanExtractTool","englishExtractTool"].forEach(id=>{
+    document.getElementById(id).classList.toggle("active",id===tab.dataset.extractTool);
+  });
+}));
+
+function cleanExtractLine(line,removeQuotes){
+  let value=String(line).replace(/\t+/g," ").trim();
+  if(removeQuotes) value=value.replace(/^["'“”]+|["'“”]+$/g,"").trim();
+  return value;
+}
+
+function extractLanguage(raw,language,removeQuotes,removeDuplicate){
+  const lines=String(raw).replace(/\r\n?/g,"\n").split("\n")
+    .map(line=>cleanExtractLine(line,removeQuotes)).filter(Boolean);
+
+  const ownTag=language==="ko" ? /^\s*국문\s*:\s*(.*)$/i : /^\s*영문\s*:\s*(.*)$/i;
+  const tagged=lines.map(line=>{
+    const match=line.match(ownTag);
+    return match ? match[1].trim() : "";
+  }).filter(Boolean);
+
+  let results;
+  if(tagged.length){
+    results=tagged;
+  }else{
+    results=lines.map(line=>line.replace(/^\s*(국문|영문)\s*:\s*/i,"").trim()).filter(line=>{
+      const hasKorean=/[가-힣ㄱ-ㅎㅏ-ㅣ]/.test(line);
+      const hasEnglish=/[A-Za-z]/.test(line);
+      return language==="ko" ? hasKorean : (!hasKorean && hasEnglish);
+    });
   }
 
-  await copyResultText(textEditOutput.value,event.currentTarget);
-  textEditStatus.textContent = "출력 결과를 전체 복사했습니다.";
-  textEditStatus.className = "text-cleaner-status success";
-});
+  if(removeDuplicate) results=[...new Set(results)];
+  return results;
+}
 
-document.getElementById("textEditDownloadBtn").addEventListener("click",() => {
-  if(!textEditOutput.value.trim()){
-    textEditStatus.textContent = "저장할 결과가 없습니다.";
-    textEditStatus.className = "text-cleaner-status error";
-    return;
-  }
-
-  const blob = new Blob(["\uFEFF" + textEditOutput.value],{type:"text/plain;charset=utf-8"});
-  downloadBlob(blob,"텍스트_수정.txt");
-  textEditStatus.textContent = "TXT 파일로 저장했습니다.";
-  textEditStatus.className = "text-cleaner-status success";
-});
-
-document.getElementById("textEditClearBtn").addEventListener("click",() => {
-  textEditNames.value = "";
-  textEditContents.value = "";
-  updateTextEdit();
-  textEditNames.focus();
-});
-
-/* 국문·영문 추출 */
-function bindTextExtractor(config){
-  const input = document.getElementById(config.input);
-  const output = document.getElementById(config.output);
-  const inputCount = document.getElementById(config.inputCount);
-  const outputCount = document.getElementById(config.outputCount);
-  const removeQuotes = document.getElementById(config.removeQuotes);
-  const removeDuplicate = document.getElementById(config.removeDuplicate);
-  const status = document.getElementById(config.status);
+function bindExtractor(config){
+  const input=document.getElementById(config.input);
+  const output=document.getElementById(config.output);
+  const inputCount=document.getElementById(config.inputCount);
+  const outputCount=document.getElementById(config.outputCount);
+  const removeQuotes=document.getElementById(config.removeQuotes);
+  const removeDuplicate=document.getElementById(config.removeDuplicate);
+  const status=document.getElementById(config.status);
 
   function update(){
-    let text = String(input.value).replace(/\r\n?/g,"\n");
+    const results=extractLanguage(input.value,config.language,removeQuotes.checked,removeDuplicate.checked);
+    inputCount.textContent=`${cleanLines(input.value).length}줄`;
+    outputCount.textContent=`${results.length}건`;
+    output.value=results.join("\n");
+    status.className="text-cleaner-status";
 
-    if(removeQuotes.checked){
-      text = text.replace(/"/g,"");
-    }
-
-    const pattern = new RegExp(`^\\s*${config.tag}\\s*:\\s*(.*)$`,"i");
-    let results = text
-      .split("\n")
-      .map(line => {
-        const match = line.match(pattern);
-        return match ? match[1].trim() : "";
-      })
-      .filter(Boolean);
-
-    if(removeDuplicate.checked){
-      results = [...new Set(results)];
-    }
-
-    inputCount.textContent = `${getTextCleanerLines(input.value).length}줄`;
-    outputCount.textContent = `${results.length}건`;
-    output.value = results.join("\n");
-    status.className = "text-cleaner-status";
-
-    if(!input.value.trim()){
-      status.textContent = "";
-    }else if(!results.length){
-      status.textContent = `${config.tag}: 항목을 찾지 못했습니다.`;
+    if(!input.value.trim()) status.textContent="";
+    else if(!results.length){
+      status.textContent=`${config.label}으로 판단되는 항목을 찾지 못했습니다.`;
       status.classList.add("error");
     }else{
-      status.textContent = `${results.length}건을 추출했습니다.`;
+      status.textContent=`${results.length}건을 자동 추출했습니다.`;
       status.classList.add("success");
     }
   }
 
-  [input,removeQuotes,removeDuplicate].forEach(element => {
-    element.addEventListener("input",update);
-    element.addEventListener("change",update);
+  input.addEventListener("input",update);
+  removeQuotes.addEventListener("change",update);
+  removeDuplicate.addEventListener("change",update);
+
+  document.getElementById(config.copy).addEventListener("click",async e=>{
+    if(output.value.trim()) await copyResultText(output.value,e.currentTarget);
   });
 
-  document.getElementById(config.copy).addEventListener("click",async event => {
-    if(!output.value.trim()){
-      status.textContent = "복사할 결과가 없습니다.";
-      status.className = "text-cleaner-status error";
-      return;
+  document.getElementById(config.download).addEventListener("click",()=>{
+    if(output.value.trim()){
+      downloadBlob(new Blob(["\uFEFF"+output.value],{type:"text/plain;charset=utf-8"}),`${config.label}_추출.txt`);
     }
-
-    await copyResultText(output.value,event.currentTarget);
-    status.textContent = "추출 결과를 전체 복사했습니다.";
-    status.className = "text-cleaner-status success";
   });
 
-  document.getElementById(config.download).addEventListener("click",() => {
-    if(!output.value.trim()){
-      status.textContent = "저장할 결과가 없습니다.";
-      status.className = "text-cleaner-status error";
-      return;
-    }
-
-    const blob = new Blob(["\uFEFF" + output.value],{type:"text/plain;charset=utf-8"});
-    downloadBlob(blob,`${config.tag}_추출.txt`);
-    status.textContent = "TXT 파일로 저장했습니다.";
-    status.className = "text-cleaner-status success";
-  });
-
-  document.getElementById(config.clear).addEventListener("click",() => {
-    input.value = "";
+  document.getElementById(config.clear).addEventListener("click",()=>{
+    input.value="";
     update();
-    input.focus();
   });
 }
 
-bindTextExtractor({
-  input:"koreanInput",
-  output:"koreanOutput",
-  inputCount:"koreanInputCount",
-  outputCount:"koreanOutputCount",
-  removeQuotes:"koreanRemoveQuotes",
-  removeDuplicate:"koreanRemoveDuplicate",
-  status:"koreanStatus",
-  copy:"koreanCopyBtn",
-  download:"koreanDownloadBtn",
-  clear:"koreanClearBtn",
-  tag:"국문"
+bindExtractor({
+  input:"koreanInput",output:"koreanOutput",inputCount:"koreanInputCount",outputCount:"koreanOutputCount",
+  removeQuotes:"koreanRemoveQuotes",removeDuplicate:"koreanRemoveDuplicate",status:"koreanStatus",
+  copy:"koreanCopyBtn",download:"koreanDownloadBtn",clear:"koreanClearBtn",language:"ko",label:"국문"
 });
 
-bindTextExtractor({
-  input:"englishInput",
-  output:"englishOutput",
-  inputCount:"englishInputCount",
-  outputCount:"englishOutputCount",
-  removeQuotes:"englishRemoveQuotes",
-  removeDuplicate:"englishRemoveDuplicate",
-  status:"englishStatus",
-  copy:"englishCopyBtn",
-  download:"englishDownloadBtn",
-  clear:"englishClearBtn",
-  tag:"영문"
+bindExtractor({
+  input:"englishInput",output:"englishOutput",inputCount:"englishInputCount",outputCount:"englishOutputCount",
+  removeQuotes:"englishRemoveQuotes",removeDuplicate:"englishRemoveDuplicate",status:"englishStatus",
+  copy:"englishCopyBtn",download:"englishDownloadBtn",clear:"englishClearBtn",language:"en",label:"영문"
 });
-
 </script>
 </body>
 </html>
