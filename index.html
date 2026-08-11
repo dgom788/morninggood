@@ -1370,6 +1370,23 @@ select{
 
 
 .extract-tabs{grid-template-columns:repeat(2,1fr)}
+
+.simple-tool-wrap{max-width:1100px;margin:0}
+.simple-tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.simple-tool-card{overflow:hidden;border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:var(--shadow)}
+.simple-tool-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 17px;border-bottom:1px solid var(--line)}
+.simple-tool-title{font-size:15px;font-weight:1000}
+.simple-tool-count{display:inline-flex;align-items:center;justify-content:center;min-width:42px;height:28px;padding:0 10px;border-radius:999px;color:#3157d5;background:#e8efff;font-size:11px;font-weight:1000}
+.simple-tool-body{padding:16px}
+.simple-tool-textarea{width:100%;min-height:360px;resize:vertical;padding:15px;border:1px solid var(--line);border-radius:12px;color:var(--text);background:#fbfdff;outline:none;font:14px/1.75 "Consolas","SFMono-Regular","Malgun Gothic",monospace;transition:.16s ease}
+.simple-tool-textarea:focus{border-color:#3157d5;background:#fff;box-shadow:0 0 0 3px rgba(49,87,213,.10)}
+.simple-tool-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:13px}
+.simple-tool-actions .action-btn{width:auto;min-width:105px}
+.simple-tool-status{min-height:21px;margin-top:11px;color:var(--muted);font-size:12px}
+.simple-tool-status.success{color:#16845b;font-weight:900}
+.simple-tool-status.error{color:var(--danger);font-weight:900}
+@media(max-width:760px){.simple-tool-grid{grid-template-columns:1fr}.simple-tool-textarea{min-height:280px}}
+
 </style>
 
 </head>
@@ -1418,6 +1435,16 @@ select{
       <button type="button" class="side-nav-btn" data-open="textExtractScreen">
         <span class="side-nav-icon">T</span>
         <span>텍스트 추출</span>
+      </button>
+
+      <button type="button" class="side-nav-btn" data-open="numberRemoveScreen">
+        <span class="side-nav-icon">#</span>
+        <span>번호 제거</span>
+      </button>
+
+      <button type="button" class="side-nav-btn" data-open="groupProductsScreen">
+        <span class="side-nav-icon">G</span>
+        <span>업체별 묶기</span>
       </button>
     </nav>
 
@@ -1854,6 +1881,94 @@ select{
           ※ ‘국문:’·‘영문:’이 있으면 해당 표시 뒤의 내용을 추출합니다.<br>
           ※ 표시가 없으면 한글이 포함된 줄은 국문, 한글 없이 영문자가 포함된 줄은 영문으로 자동 구분합니다.<br>
           ※ 큰따옴표와 빈 줄은 자동으로 정리됩니다.
+        </div>
+      </div>
+    </section>
+
+
+    <section class="screen" id="numberRemoveScreen">
+      <div class="page-head">
+        <div class="page-kicker" style="color:#3157d5;">NUMBER PREFIX CLEANER</div>
+        <h1>번호 제거</h1>
+        <p>각 줄 맨 앞의 번호만 제거하고 뒤의 텍스트는 그대로 남깁니다.</p>
+      </div>
+
+      <div class="simple-tool-wrap">
+        <div class="simple-tool-grid">
+          <section class="simple-tool-card">
+            <div class="simple-tool-head">
+              <div class="simple-tool-title">원본 입력</div>
+              <div class="simple-tool-count" id="numberInputCount">0줄</div>
+            </div>
+            <div class="simple-tool-body">
+              <textarea id="numberInput" class="simple-tool-textarea" spellcheck="false" placeholder="1) 내용&#10;2) 내용&#10;3. 내용"></textarea>
+            </div>
+          </section>
+
+          <section class="simple-tool-card">
+            <div class="simple-tool-head">
+              <div class="simple-tool-title">번호 제거 결과</div>
+              <div class="simple-tool-count" id="numberOutputCount">0건</div>
+            </div>
+            <div class="simple-tool-body">
+              <textarea id="numberOutput" class="simple-tool-textarea" readonly spellcheck="false"></textarea>
+              <div class="simple-tool-actions">
+                <button type="button" class="action-btn btn-primary" id="numberCopyBtn">전체 복사</button>
+                <button type="button" class="action-btn btn-gray" id="numberDownloadBtn">TXT 저장</button>
+                <button type="button" class="action-btn btn-danger" id="numberClearBtn">전체 초기화</button>
+              </div>
+              <div class="simple-tool-status" id="numberStatus"></div>
+            </div>
+          </section>
+        </div>
+
+        <div class="notice">
+          ※ 1), 2), 10)뿐 아니라 1., 2., 10. 형식도 제거합니다.<br>
+          ※ 뒤의 텍스트와 괄호·문장부호는 그대로 유지됩니다.
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="groupProductsScreen">
+      <div class="page-head">
+        <div class="page-kicker" style="color:#0f9f8f;">COMPANY GROUPER</div>
+        <h1>업체별 묶기</h1>
+        <p>왼쪽 업체명이 같으면 오른쪽 제품명을 한 묶음으로 정리합니다.</p>
+      </div>
+
+      <div class="simple-tool-wrap">
+        <div class="simple-tool-grid">
+          <section class="simple-tool-card">
+            <div class="simple-tool-head">
+              <div class="simple-tool-title">원본 입력</div>
+              <div class="simple-tool-count" id="groupInputCount">0건</div>
+            </div>
+            <div class="simple-tool-body">
+              <textarea id="groupInput" class="simple-tool-textarea" spellcheck="false" placeholder="업체명    제품명&#10;업체명    제품명"></textarea>
+            </div>
+          </section>
+
+          <section class="simple-tool-card">
+            <div class="simple-tool-head">
+              <div class="simple-tool-title">업체별 묶기 결과</div>
+              <div class="simple-tool-count" id="groupOutputCount">0묶음</div>
+            </div>
+            <div class="simple-tool-body">
+              <textarea id="groupOutput" class="simple-tool-textarea" readonly spellcheck="false"></textarea>
+              <div class="simple-tool-actions">
+                <button type="button" class="action-btn" id="groupCopyBtn" style="background:#0f9f8f;">전체 복사</button>
+                <button type="button" class="action-btn btn-gray" id="groupDownloadBtn">TXT 저장</button>
+                <button type="button" class="action-btn btn-danger" id="groupClearBtn">전체 초기화</button>
+              </div>
+              <div class="simple-tool-status" id="groupStatus"></div>
+            </div>
+          </section>
+        </div>
+
+        <div class="notice">
+          ※ 같은 업체의 제품이 1개면 제품명만 출력합니다.<br>
+          ※ 같은 업체의 제품이 2개 이상이면 전체 묶음의 처음과 끝에 큰따옴표(")를 붙입니다.<br>
+          ※ 원본 입력 순서는 그대로 유지됩니다.
         </div>
       </div>
     </section>
@@ -3110,6 +3225,138 @@ bindExtractor({
   removeQuotes:"englishRemoveQuotes",removeDuplicate:"englishRemoveDuplicate",status:"englishStatus",
   copy:"englishCopyBtn",download:"englishDownloadBtn",clear:"englishClearBtn",language:"en",label:"영문"
 });
+
+
+/* 번호 제거 */
+const numberInput=document.getElementById("numberInput");
+const numberOutput=document.getElementById("numberOutput");
+const numberInputCount=document.getElementById("numberInputCount");
+const numberOutputCount=document.getElementById("numberOutputCount");
+const numberStatus=document.getElementById("numberStatus");
+
+function updateNumberRemove(){
+  const rows=String(numberInput.value).replace(/\r\n?/g,"\n").split("\n").filter(line=>line.trim());
+  const results=rows.map(line=>line.replace(/^\s*\d+\s*[\)\.\-]\s*/,"").trim());
+
+  numberInputCount.textContent=`${rows.length}줄`;
+  numberOutputCount.textContent=`${results.length}건`;
+  numberOutput.value=results.join("\n");
+  numberStatus.className="simple-tool-status";
+
+  if(!numberInput.value.trim()){
+    numberStatus.textContent="";
+  }else{
+    numberStatus.textContent=`${results.length}건을 정리했습니다.`;
+    numberStatus.classList.add("success");
+  }
+}
+
+numberInput.addEventListener("input",updateNumberRemove);
+
+document.getElementById("numberCopyBtn").addEventListener("click",async e=>{
+  if(!numberOutput.value.trim()){
+    numberStatus.textContent="복사할 결과가 없습니다.";
+    numberStatus.className="simple-tool-status error";
+    return;
+  }
+  await copyResultText(numberOutput.value,e.currentTarget);
+});
+
+document.getElementById("numberDownloadBtn").addEventListener("click",()=>{
+  if(!numberOutput.value.trim()) return;
+  downloadBlob(new Blob(["\uFEFF"+numberOutput.value],{type:"text/plain;charset=utf-8"}),"번호_제거.txt");
+});
+
+document.getElementById("numberClearBtn").addEventListener("click",()=>{
+  numberInput.value="";
+  updateNumberRemove();
+  numberInput.focus();
+});
+
+/* 업체별 묶기 */
+const groupInput=document.getElementById("groupInput");
+const groupOutput=document.getElementById("groupOutput");
+const groupInputCount=document.getElementById("groupInputCount");
+const groupOutputCount=document.getElementById("groupOutputCount");
+const groupStatus=document.getElementById("groupStatus");
+
+function parseCompanyProductRows(raw){
+  return String(raw).replace(/\r\n?/g,"\n").split("\n")
+    .filter(line=>line.trim())
+    .map(line=>{
+      let parts=line.split(/\t+/);
+      if(parts.length<2) parts=line.trim().split(/\s{2,}/);
+      if(parts.length<2) return null;
+
+      const company=parts.shift().trim();
+      const product=parts.join(" ").trim();
+      return company&&product ? {company,product} : null;
+    })
+    .filter(Boolean);
+}
+
+function groupConsecutiveCompanyRows(rows){
+  const groups=[];
+  rows.forEach(row=>{
+    const last=groups[groups.length-1];
+    if(last && last.company===row.company){
+      last.products.push(row.product);
+    }else{
+      groups.push({company:row.company,products:[row.product]});
+    }
+  });
+  return groups;
+}
+
+function formatGroupedProducts(groups){
+  return groups.map(group=>{
+    if(group.products.length===1) return group.products[0];
+    return `"${group.products.join("\n")}"`;
+  }).join("\n");
+}
+
+function updateCompanyGrouping(){
+  const rows=parseCompanyProductRows(groupInput.value);
+  const groups=groupConsecutiveCompanyRows(rows);
+
+  groupInputCount.textContent=`${rows.length}건`;
+  groupOutputCount.textContent=`${groups.length}묶음`;
+  groupOutput.value=formatGroupedProducts(groups);
+  groupStatus.className="simple-tool-status";
+
+  if(!groupInput.value.trim()){
+    groupStatus.textContent="";
+  }else if(!rows.length){
+    groupStatus.textContent="업체명과 제품명이 탭 또는 큰 간격으로 구분되어 있는지 확인해 주세요.";
+    groupStatus.classList.add("error");
+  }else{
+    groupStatus.textContent=`${rows.length}건을 ${groups.length}개 묶음으로 정리했습니다.`;
+    groupStatus.classList.add("success");
+  }
+}
+
+groupInput.addEventListener("input",updateCompanyGrouping);
+
+document.getElementById("groupCopyBtn").addEventListener("click",async e=>{
+  if(!groupOutput.value.trim()){
+    groupStatus.textContent="복사할 결과가 없습니다.";
+    groupStatus.className="simple-tool-status error";
+    return;
+  }
+  await copyResultText(groupOutput.value,e.currentTarget);
+});
+
+document.getElementById("groupDownloadBtn").addEventListener("click",()=>{
+  if(!groupOutput.value.trim()) return;
+  downloadBlob(new Blob(["\uFEFF"+groupOutput.value],{type:"text/plain;charset=utf-8"}),"업체별_묶기.txt");
+});
+
+document.getElementById("groupClearBtn").addEventListener("click",()=>{
+  groupInput.value="";
+  updateCompanyGrouping();
+  groupInput.focus();
+});
+
 </script>
 </body>
 </html>
