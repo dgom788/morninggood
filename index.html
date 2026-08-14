@@ -1695,6 +1695,7 @@ select{
 
               <div class="company-tool-actions">
                 <button type="button" class="action-btn" id="companyConvertBtn" style="background:#d89829;">변환하기</button>
+                <button type="button" class="action-btn" id="excelCompanyExtractBtn" style="background:#3157d5;">엑셀 업체명 추출</button>
                 <button type="button" class="action-btn btn-gray" id="companyClearBtn">전체 지우기</button>
               </div>
 
@@ -1729,7 +1730,8 @@ select{
         <div class="company-tool-notice">
           ※ 탭 또는 큰 간격으로 나뉜 열은 <b> / </b>로 변환됩니다.<br>
           ※ 큰따옴표 안에서 줄바꿈된 품번은 <b>, </b>로 이어집니다.<br>
-          ※ 금액의 쉼표와 회사명의 일반 띄어쓰기는 그대로 유지됩니다.
+          ※ 금액의 쉼표와 회사명의 일반 띄어쓰기는 그대로 유지됩니다.<br>
+          ※ <b>업체명 추출</b>은 @담당자 줄을 제외하고 각 줄의 첫 번째 <b> / </b> 앞 업체명만 뽑아 중복 제거 후 <b> / </b>로 연결합니다.
         </div>
       </div>
     </section>
@@ -2988,6 +2990,75 @@ function runCompanyConversion(){
 }
 
 document.getElementById("companyConvertBtn").addEventListener("click",runCompanyConversion);
+
+function extractExcelCompanyNames(raw){
+  const text = String(raw).replace(/\r\n?/g,"\n");
+  const names = [];
+  let current = "";
+  let inQuotes = false;
+  const rows = [];
+
+  for(let i = 0; i < text.length; i++){
+    const ch = text[i];
+
+    if(ch === '"'){
+      if(inQuotes && text[i + 1] === '"'){
+        current += '"';
+        i++;
+      }else{
+        inQuotes = !inQuotes;
+        current += ch;
+      }
+      continue;
+    }
+
+    if(ch === "\n" && !inQuotes){
+      if(current.trim()) rows.push(current);
+      current = "";
+      continue;
+    }
+
+    current += ch;
+  }
+
+  if(current.trim()) rows.push(current);
+
+  for(const row of rows){
+    const firstCell = row.split("\t")[0].trim();
+    if(!firstCell || firstCell.startsWith("@")) continue;
+
+    if(!names.includes(firstCell)){
+      names.push(firstCell);
+    }
+  }
+
+  return names;
+}
+
+document.getElementById("excelCompanyExtractBtn").addEventListener("click",() => {
+  const names = extractExcelCompanyNames(companyInput.value);
+
+  companyOutput.value = names.join(" / ");
+  companyOutputCount.textContent = `${names.length}건`;
+  companyInputStatus.className = "company-tool-status";
+  companyOutputStatus.className = "company-tool-status";
+
+  if(!companyInput.value.trim()){
+    companyInputStatus.textContent = "엑셀에서 복사한 데이터를 붙여넣어 주세요.";
+    companyInputStatus.classList.add("error");
+    companyOutputStatus.textContent = "";
+    return;
+  }
+
+  if(!names.length){
+    companyOutputStatus.textContent = "첫 번째 열에서 업체명을 찾지 못했습니다.";
+    companyOutputStatus.classList.add("error");
+    return;
+  }
+
+  companyOutputStatus.textContent = `${names.length}개 업체명을 추출했습니다.`;
+  companyOutputStatus.classList.add("success");
+});
 
 document.getElementById("companyClearBtn").addEventListener("click",() => {
   companyInput.value = "";
