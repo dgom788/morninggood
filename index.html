@@ -1387,7 +1387,7 @@ select{
 .simple-tool-status.error{color:var(--danger);font-weight:900}
 @media(max-width:760px){.simple-tool-grid{grid-template-columns:1fr}.simple-tool-textarea{min-height:280px}}
 
-</style>
+.phrase-tabs{grid-template-columns:repeat(2,1fr)}.phrase-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}.phrase-field{display:flex;flex-direction:column;gap:7px}.phrase-field span{font-size:12px;font-weight:900;color:var(--muted)}.phrase-field input,.phrase-field select{height:46px;border:1px solid var(--line);border-radius:10px;padding:0 13px;background:#fbfdff;color:var(--text);font:inherit;outline:none}.phrase-info{display:flex;align-items:center;padding:0 14px;min-height:46px;border:1px solid var(--line);border-radius:10px;background:#f8fafc;color:var(--muted);font-size:13px;font-weight:800}.phrase-out{min-height:180px}@media(max-width:760px){.phrase-grid{grid-template-columns:1fr}}</style>
 
 </head>
 
@@ -1445,6 +1445,9 @@ select{
       <button type="button" class="side-nav-btn" data-open="groupProductsScreen">
         <span class="side-nav-icon">G</span>
         <span>업체별 묶기</span>
+      </button>
+      <button type="button" class="side-nav-btn" data-open="phraseGeneratorScreen">
+        <span class="side-nav-icon">M</span><span>문구 자동 생성</span>
       </button>
     </nav>
 
@@ -1975,6 +1978,23 @@ select{
       </div>
     </section>
 
+<section class="screen" id="phraseGeneratorScreen">
+<div class="page-head"><div class="page-kicker" style="color:#7c3aed">MESSAGE GENERATOR</div><h1>문구 자동 생성</h1><p>자주 사용하는 업무 문구를 자동으로 만들고 바로 복사합니다.</p></div>
+<div class="text-cleaner-wrap">
+<div class="text-tool-tabs phrase-tabs"><button type="button" class="text-tool-tab active" data-phrase="depositPhrase">입금 내역 문구</button><button type="button" class="text-tool-tab" data-phrase="docPhrase">견적서 · 계약서</button></div>
+<section class="text-tool-content active" id="depositPhrase">
+<div class="text-cleaner-card"><div class="text-cleaner-head"><div class="text-cleaner-title">입금 내역 공유 문구</div><div class="text-cleaner-count" id="depositBadge">자동</div></div>
+<div class="text-cleaner-body"><div class="phrase-grid"><label class="phrase-field"><span>기준일</span><input type="date" id="depositDate"></label><div class="phrase-info" id="depositInfo"></div></div>
+<textarea id="depositOut" class="text-cleaner-textarea phrase-out" readonly></textarea>
+<div class="text-cleaner-actions"><button type="button" class="action-btn" id="depositCopy" style="background:#7c3aed">전체 복사</button><button type="button" class="action-btn btn-gray" id="depositToday">오늘로 변경</button></div><div class="text-cleaner-status" id="depositStatus"></div></div></div>
+<div class="notice">※ 기준일 직전 영업일부터 기준일 오전까지로 계산합니다.<br>※ 토·일요일과 대한민국 공휴일·대체공휴일을 건너뜁니다.<br>※ 2026년 대한민국 공휴일 일정이 내장되어 있습니다.</div>
+</section>
+<section class="text-tool-content" id="docPhrase">
+<div class="text-cleaner-card"><div class="text-cleaner-head"><div class="text-cleaner-title">서류 전달 문구</div><div class="text-cleaner-count">자동</div></div>
+<div class="text-cleaner-body"><div class="phrase-grid"><label class="phrase-field"><span>업체명</span><input type="text" id="docCompany" placeholder="업체명을 입력해 주세요."></label><label class="phrase-field"><span>서류 종류</span><select id="docType"><option>견적서</option><option>계약서</option></select></label></div>
+<textarea id="docOut" class="text-cleaner-textarea phrase-out" readonly placeholder="업체명을 입력하면 자동 생성됩니다."></textarea>
+<div class="text-cleaner-actions"><button type="button" class="action-btn" id="docCopy" style="background:#7c3aed">전체 복사</button><button type="button" class="action-btn btn-gray" id="docClear">전체 지우기</button></div><div class="text-cleaner-status" id="docStatus"></div></div></div>
+</section></div></section>
   </main>
 </div>
 
@@ -3428,6 +3448,22 @@ document.getElementById("groupClearBtn").addEventListener("click",()=>{
   groupInput.focus();
 });
 
+
+const phraseTabs=[...document.querySelectorAll("[data-phrase]")];
+phraseTabs.forEach(t=>t.addEventListener("click",()=>{phraseTabs.forEach(x=>x.classList.toggle("active",x===t));["depositPhrase","docPhrase"].forEach(id=>document.getElementById(id).classList.toggle("active",id===t.dataset.phrase));}));
+const H26=new Set(["2026-01-01","2026-02-16","2026-02-17","2026-02-18","2026-03-01","2026-03-02","2026-05-05","2026-05-24","2026-05-25","2026-06-03","2026-06-06","2026-08-15","2026-08-17","2026-09-24","2026-09-25","2026-09-26","2026-10-03","2026-10-05","2026-10-09","2026-12-25"]);
+function iso(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function dateFrom(v){let [y,m,d]=v.split("-").map(Number);return new Date(y,m-1,d)}
+function biz(d){return d.getDay()!=0&&d.getDay()!=6&&!H26.has(iso(d))}
+function prevBiz(d){let x=new Date(d);do{x.setDate(x.getDate()-1)}while(!biz(x));return x}
+function md(d){return `${d.getMonth()+1}월 ${d.getDate()}일`}
+const depositDate=document.getElementById("depositDate"),depositOut=document.getElementById("depositOut"),depositInfo=document.getElementById("depositInfo"),depositBadge=document.getElementById("depositBadge"),depositStatus=document.getElementById("depositStatus");
+function updateDeposit(){if(!depositDate.value)return;let e=dateFrom(depositDate.value),s=prevBiz(e);depositOut.value=`${md(s)}부터 ${md(e)} 오전까지 입금된 내역 이미지입니다.\n에틱 / 피부`;depositInfo.textContent=`${md(s)} → ${md(e)} 오전`;depositBadge.textContent=`${s.getMonth()+1}/${s.getDate()} ~ ${e.getMonth()+1}/${e.getDate()}`}
+function today(){depositDate.value=iso(new Date());updateDeposit()}
+depositDate.addEventListener("change",updateDeposit);document.getElementById("depositToday").onclick=today;document.getElementById("depositCopy").onclick=async e=>{await copyResultText(depositOut.value,e.currentTarget);depositStatus.textContent="복사했습니다.";depositStatus.className="text-cleaner-status success"};
+const docCompany=document.getElementById("docCompany"),docType=document.getElementById("docType"),docOut=document.getElementById("docOut"),docStatus=document.getElementById("docStatus");
+function updateDoc(){docOut.value=docCompany.value.trim()?`${docCompany.value.trim()} ${docType.value} 전달드립니다.`:""}
+docCompany.addEventListener("input",updateDoc);docType.addEventListener("change",updateDoc);document.getElementById("docCopy").onclick=async e=>{if(!docOut.value)return;await copyResultText(docOut.value,e.currentTarget);docStatus.textContent="복사했습니다.";docStatus.className="text-cleaner-status success"};document.getElementById("docClear").onclick=()=>{docCompany.value="";docType.value="견적서";updateDoc()};today();
 </script>
 </body>
 </html>
