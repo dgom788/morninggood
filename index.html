@@ -2013,10 +2013,10 @@ select{
 <div class="notice">※ @ 뒤 담당자명은 직접 입력합니다.<br>※ 업체명은 줄마다 입력하면 자동으로 <b> / </b>로 연결됩니다.<br>※ 담당자 카드는 자유롭게 추가·삭제할 수 있습니다.</div></section>
 <section class="tax-content" id="taxIssuedTool"><div class="tax-card"><div class="tax-head"><div class="tax-title">세금계산서 발행 공유</div><div class="text-cleaner-count" id="taxIssuedBadge">자동</div></div><div class="tax-body">
 <div class="tax-date-line"><label class="tax-field"><span>기준일</span><input type="date" id="taxIssuedDate"></label><div class="tax-date-info" id="taxIssuedDateInfo"></div></div>
-<label class="tax-field"><span>업체명 목록</span><textarea id="taxIssuedCompanies" placeholder="업체명을 줄마다 입력해 주세요."></textarea></label>
+<label class="tax-field"><span>업체명 목록</span><textarea id="taxIssuedCompanies" placeholder="@담당자와 업체 내역을 그대로 붙여넣어도 됩니다.&#10;업체명만 줄마다 입력해도 됩니다."></textarea></label>
 <textarea id="taxIssuedOutput" class="tax-output" readonly></textarea>
 <div class="tax-actions"><button type="button" class="action-btn" id="taxIssuedCopyBtn" style="background:#f2b705;color:#172033">전체 복사</button><button type="button" class="action-btn btn-gray" id="taxIssuedTodayBtn">오늘로 변경</button><button type="button" class="action-btn btn-danger" id="taxIssuedClearBtn">전체 초기화</button></div></div></div>
-<div class="notice">※ 날짜는 선택한 당일로 자동 표시됩니다.<br>※ 업체명은 줄마다 입력하면 <b> / </b>로 연결됩니다.</div></section>
+<div class="notice">※ 날짜는 선택한 당일로 자동 표시됩니다.<br>※ 아침 목록을 그대로 붙여넣어도 <b>@담당자</b>는 제외하고 업체명만 추출합니다.<br>※ 금액·퍼센트·품번은 제거하고 업체명을 <b> / </b>로 연결합니다.</div></section>
 </div></section>
   </main>
 </div>
@@ -3493,10 +3493,54 @@ function txISO(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2
 const taxPersonList=document.getElementById("taxPersonList");let taxPersonSeq=0;
 function addTaxPerson(name="",companies=""){taxPersonSeq++;const c=document.createElement("div");c.className="tax-person-card";c.innerHTML=`<label class="tax-field"><span>@ 뒤 담당자명</span><input type="text" class="tax-person-name" value="${escapeHTML(name)}" placeholder="예: 정희정 대표님"></label><label class="tax-field"><span>업체명</span><textarea class="tax-person-companies" placeholder="업체명을 줄마다 입력해 주세요.">${escapeHTML(companies)}</textarea></label><button type="button" class="tax-remove-btn">×</button>`;c.querySelector(".tax-person-name").addEventListener("input",updateTaxMorning);c.querySelector(".tax-person-companies").addEventListener("input",updateTaxMorning);c.querySelector(".tax-remove-btn").onclick=()=>{c.remove();updateTaxMorning()};taxPersonList.appendChild(c);updateTaxMorning()}
 const taxMorningDate=document.getElementById("taxMorningDate"),taxMorningOutput=document.getElementById("taxMorningOutput"),taxMorningDateInfo=document.getElementById("taxMorningDateInfo"),taxMorningBadge=document.getElementById("taxMorningBadge");
-function updateTaxMorning(){if(!taxMorningDate.value)return;let d=txDate(taxMorningDate.value),b=[];[...taxPersonList.querySelectorAll(".tax-person-card")].forEach(c=>{let n=c.querySelector(".tax-person-name").value.trim(),cs=txLines(c.querySelector(".tax-person-companies").value);if(!n&&!cs.length)return;b.push(`${n?`@${n}`:"@"}${cs.length?`\n${cs.join(" / ")}`:""}`)});taxMorningOutput.value=[`[오늘의 세금계산서(${txMD(d)})]`,...b].join("\n\n");taxMorningDateInfo.textContent=`${txKR(d)} 발행 예정`;taxMorningBadge.textContent=txMD(d)}
+function updateTaxMorning(){if(!taxMorningDate.value)return;let d=txDate(taxMorningDate.value),b=[];[...taxPersonList.querySelectorAll(".tax-person-card")].forEach(c=>{let n=c.querySelector(".tax-person-name").value.trim(),cs=txLines(c.querySelector(".tax-person-companies").value);if(!n&&!cs.length)return;b.push(`${n?`@${n}`:"@"}${cs.length?`\n${cs.join("\n")}`:""}`)});taxMorningOutput.value=[`[오늘의 세금계산서(${txMD(d)})]`,...b].join("\n\n");taxMorningDateInfo.textContent=`${txKR(d)} 발행 예정`;taxMorningBadge.textContent=txMD(d)}
 function setTaxMorningToday(){taxMorningDate.value=txISO(new Date());updateTaxMorning()}document.getElementById("taxAddPersonBtn").onclick=()=>addTaxPerson();document.getElementById("taxMorningCopyBtn").onclick=async e=>{if(taxMorningOutput.value.trim())await copyResultText(taxMorningOutput.value,e.currentTarget)};document.getElementById("taxMorningTodayBtn").onclick=setTaxMorningToday;document.getElementById("taxMorningClearBtn").onclick=()=>{taxPersonList.innerHTML="";addTaxPerson()};taxMorningDate.addEventListener("change",updateTaxMorning);
 const taxIssuedDate=document.getElementById("taxIssuedDate"),taxIssuedCompanies=document.getElementById("taxIssuedCompanies"),taxIssuedOutput=document.getElementById("taxIssuedOutput"),taxIssuedDateInfo=document.getElementById("taxIssuedDateInfo"),taxIssuedBadge=document.getElementById("taxIssuedBadge");
-function updateTaxIssued(){if(!taxIssuedDate.value)return;let d=txDate(taxIssuedDate.value),cs=txLines(taxIssuedCompanies.value);taxIssuedOutput.value=`${txKR(d)} 오늘의 세금계산서 이미지입니다.\n\n${cs.join(" / ")}`;taxIssuedDateInfo.textContent=`${txKR(d)} 발행 공유`;taxIssuedBadge.textContent=txMD(d)}
+function extractTaxIssuedCompanyNames(value){
+  const lines=String(value)
+    .replace(/\r\n?/g,"\n")
+    .split("\n")
+    .map(line=>line.trim())
+    .filter(Boolean);
+
+  const names=[];
+
+  for(const line of lines){
+    if(line.startsWith("@")) continue;
+    if(/^\[?오늘의\s*세금계산서/i.test(line)) continue;
+    if(/^\d{1,2}월\s*\d{1,2}일\s*오늘의\s*세금계산서/i.test(line)) continue;
+
+    let company=line;
+    const slashIndex=line.indexOf(" / ");
+
+    if(slashIndex!==-1){
+      company=line.slice(0,slashIndex).trim();
+    }
+
+    if(!company) continue;
+    if(!names.includes(company)){
+      names.push(company);
+    }
+  }
+
+  return names;
+}
+
+function updateTaxIssued(){
+  if(!taxIssuedDate.value)return;
+
+  const d=txDate(taxIssuedDate.value);
+  const companies=extractTaxIssuedCompanyNames(taxIssuedCompanies.value);
+
+  taxIssuedOutput.value=
+`${txKR(d)} 오늘의 세금계산서 이미지입니다.
+
+${companies.join(" / ")}`;
+
+  taxIssuedDateInfo.textContent=`${txKR(d)} 발행 공유`;
+  taxIssuedBadge.textContent=txMD(d);
+}
+
 function setTaxIssuedToday(){taxIssuedDate.value=txISO(new Date());updateTaxIssued()}taxIssuedDate.addEventListener("change",updateTaxIssued);taxIssuedCompanies.addEventListener("input",updateTaxIssued);document.getElementById("taxIssuedCopyBtn").onclick=async e=>{if(taxIssuedOutput.value.trim())await copyResultText(taxIssuedOutput.value,e.currentTarget)};document.getElementById("taxIssuedTodayBtn").onclick=setTaxIssuedToday;document.getElementById("taxIssuedClearBtn").onclick=()=>{taxIssuedCompanies.value="";updateTaxIssued()};setTaxMorningToday();setTaxIssuedToday();addTaxPerson();
 </script>
 </body>
