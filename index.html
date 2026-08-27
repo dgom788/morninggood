@@ -1387,7 +1387,9 @@ select{
 .simple-tool-status.error{color:var(--danger);font-weight:900}
 @media(max-width:760px){.simple-tool-grid{grid-template-columns:1fr}.simple-tool-textarea{min-height:280px}}
 
-.phrase-tabs{grid-template-columns:repeat(2,1fr)}.phrase-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}.phrase-field{display:flex;flex-direction:column;gap:7px}.phrase-field span{font-size:12px;font-weight:900;color:var(--muted)}.phrase-field input,.phrase-field select{height:46px;border:1px solid var(--line);border-radius:10px;padding:0 13px;background:#fbfdff;color:var(--text);font:inherit;outline:none}.phrase-info{display:flex;align-items:center;padding:0 14px;min-height:46px;border:1px solid var(--line);border-radius:10px;background:#f8fafc;color:var(--muted);font-size:13px;font-weight:800}.phrase-out{min-height:180px}@media(max-width:760px){.phrase-grid{grid-template-columns:1fr}}</style>
+.phrase-tabs{grid-template-columns:repeat(2,1fr)}.phrase-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}.phrase-field{display:flex;flex-direction:column;gap:7px}.phrase-field span{font-size:12px;font-weight:900;color:var(--muted)}.phrase-field input,.phrase-field select{height:46px;border:1px solid var(--line);border-radius:10px;padding:0 13px;background:#fbfdff;color:var(--text);font:inherit;outline:none}.phrase-info{display:flex;align-items:center;padding:0 14px;min-height:46px;border:1px solid var(--line);border-radius:10px;background:#f8fafc;color:var(--muted);font-size:13px;font-weight:800}.phrase-out{min-height:180px}@media(max-width:760px){.phrase-grid{grid-template-columns:1fr}}
+.tax-wrap{max-width:1100px;margin:0}.tax-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px;border:1px solid var(--line);border-radius:14px;background:#e9edf4}.tax-tab{min-height:46px;border-radius:10px;color:var(--muted);background:transparent;font-weight:1000;cursor:pointer}.tax-tab.active{color:#172033;background:#f2b705}.tax-content{display:none;padding-top:16px}.tax-content.active{display:block}.tax-card{overflow:hidden;border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:var(--shadow)}.tax-head{display:flex;align-items:center;justify-content:space-between;padding:15px 17px;border-bottom:1px solid var(--line)}.tax-title{font-size:15px;font-weight:1000}.tax-body{padding:16px}.tax-person-list{display:grid;gap:12px}.tax-person-card{display:grid;grid-template-columns:220px 1fr auto;gap:10px;align-items:start;padding:13px;border:1px solid var(--line);border-radius:13px;background:var(--surface-soft)}.tax-field{display:flex;flex-direction:column;gap:7px}.tax-field span{color:var(--muted);font-size:12px;font-weight:900}.tax-field input,.tax-field textarea{width:100%;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--text);outline:none}.tax-field input{height:44px;padding:0 12px}.tax-field textarea{min-height:105px;padding:11px 12px;resize:vertical;font:13px/1.65 Consolas,"Malgun Gothic",monospace}.tax-remove-btn{width:40px;height:40px;border-radius:10px;color:#fff;background:var(--danger);font-weight:1000;cursor:pointer}.tax-add-row{margin-top:12px}.tax-add-row .action-btn,.tax-actions .action-btn{width:auto}.tax-output{width:100%;min-height:280px;margin-top:14px;resize:vertical;padding:15px;border:1px solid var(--line);border-radius:12px;background:#fbfdff;color:var(--text);outline:none;font:14px/1.75 Consolas,"Malgun Gothic",monospace}.tax-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}.tax-date-line{display:grid;grid-template-columns:280px 1fr;gap:14px;align-items:end;margin-bottom:14px}.tax-date-info{min-height:44px;display:flex;align-items:center;padding:0 13px;border:1px solid var(--line);border-radius:10px;background:#f8fafc;color:var(--muted);font-size:13px;font-weight:800}@media(max-width:760px){.tax-tabs,.tax-date-line,.tax-person-card{grid-template-columns:1fr}.tax-remove-btn{width:100%}}
+</style>
 
 </head>
 
@@ -1448,6 +1450,9 @@ select{
       </button>
       <button type="button" class="side-nav-btn" data-open="phraseGeneratorScreen">
         <span class="side-nav-icon">M</span><span>문구 자동 생성</span>
+      </button>
+      <button type="button" class="side-nav-btn" data-open="taxInvoiceScreen">
+        <span class="side-nav-icon">₩</span><span>오늘의 세금계산서</span>
       </button>
     </nav>
 
@@ -1995,6 +2000,24 @@ select{
 <textarea id="docOut" class="text-cleaner-textarea phrase-out" readonly placeholder="업체명을 입력하면 자동 생성됩니다."></textarea>
 <div class="text-cleaner-actions"><button type="button" class="action-btn" id="docCopy" style="background:#7c3aed">전체 복사</button><button type="button" class="action-btn btn-gray" id="docClear">전체 지우기</button></div><div class="text-cleaner-status" id="docStatus"></div></div></div>
 </section></div></section>
+<section class="screen" id="taxInvoiceScreen">
+<div class="page-head"><div class="page-kicker" style="color:#c69200">TODAY TAX INVOICE</div><h1>오늘의 세금계산서</h1><p>아침 공유 목록과 발행 후 공유 문구를 자동으로 만듭니다.</p></div>
+<div class="tax-wrap">
+<div class="tax-tabs"><button type="button" class="tax-tab active" data-tax-tab="taxMorningTool">아침 목록</button><button type="button" class="tax-tab" data-tax-tab="taxIssuedTool">발행 공유</button></div>
+<section class="tax-content active" id="taxMorningTool"><div class="tax-card"><div class="tax-head"><div class="tax-title">오늘 발행 예정 목록</div><div class="text-cleaner-count" id="taxMorningBadge">자동</div></div><div class="tax-body">
+<div class="tax-date-line"><label class="tax-field"><span>기준일</span><input type="date" id="taxMorningDate"></label><div class="tax-date-info" id="taxMorningDateInfo"></div></div>
+<div class="tax-person-list" id="taxPersonList"></div>
+<div class="tax-add-row"><button type="button" class="action-btn" id="taxAddPersonBtn" style="background:#f2b705;color:#172033">담당자 추가</button></div>
+<textarea id="taxMorningOutput" class="tax-output" readonly></textarea>
+<div class="tax-actions"><button type="button" class="action-btn" id="taxMorningCopyBtn" style="background:#f2b705;color:#172033">전체 복사</button><button type="button" class="action-btn btn-gray" id="taxMorningTodayBtn">오늘로 변경</button><button type="button" class="action-btn btn-danger" id="taxMorningClearBtn">전체 초기화</button></div></div></div>
+<div class="notice">※ @ 뒤 담당자명은 직접 입력합니다.<br>※ 업체명은 줄마다 입력하면 자동으로 <b> / </b>로 연결됩니다.<br>※ 담당자 카드는 자유롭게 추가·삭제할 수 있습니다.</div></section>
+<section class="tax-content" id="taxIssuedTool"><div class="tax-card"><div class="tax-head"><div class="tax-title">세금계산서 발행 공유</div><div class="text-cleaner-count" id="taxIssuedBadge">자동</div></div><div class="tax-body">
+<div class="tax-date-line"><label class="tax-field"><span>기준일</span><input type="date" id="taxIssuedDate"></label><div class="tax-date-info" id="taxIssuedDateInfo"></div></div>
+<label class="tax-field"><span>업체명 목록</span><textarea id="taxIssuedCompanies" placeholder="업체명을 줄마다 입력해 주세요."></textarea></label>
+<textarea id="taxIssuedOutput" class="tax-output" readonly></textarea>
+<div class="tax-actions"><button type="button" class="action-btn" id="taxIssuedCopyBtn" style="background:#f2b705;color:#172033">전체 복사</button><button type="button" class="action-btn btn-gray" id="taxIssuedTodayBtn">오늘로 변경</button><button type="button" class="action-btn btn-danger" id="taxIssuedClearBtn">전체 초기화</button></div></div></div>
+<div class="notice">※ 날짜는 선택한 당일로 자동 표시됩니다.<br>※ 업체명은 줄마다 입력하면 <b> / </b>로 연결됩니다.</div></section>
+</div></section>
   </main>
 </div>
 
@@ -3464,6 +3487,17 @@ depositDate.addEventListener("change",updateDeposit);document.getElementById("de
 const docCompany=document.getElementById("docCompany"),docType=document.getElementById("docType"),docOut=document.getElementById("docOut"),docStatus=document.getElementById("docStatus");
 function updateDoc(){docOut.value=docCompany.value.trim()?`${docCompany.value.trim()} ${docType.value} 전달드립니다.`:""}
 docCompany.addEventListener("input",updateDoc);docType.addEventListener("change",updateDoc);document.getElementById("docCopy").onclick=async e=>{if(!docOut.value)return;await copyResultText(docOut.value,e.currentTarget);docStatus.textContent="복사했습니다.";docStatus.className="text-cleaner-status success"};document.getElementById("docClear").onclick=()=>{docCompany.value="";docType.value="견적서";updateDoc()};today();
+
+const taxTabs=[...document.querySelectorAll("[data-tax-tab]")];taxTabs.forEach(t=>t.addEventListener("click",()=>{taxTabs.forEach(x=>x.classList.toggle("active",x===t));["taxMorningTool","taxIssuedTool"].forEach(id=>document.getElementById(id).classList.toggle("active",id===t.dataset.taxTab));}));
+function txISO(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}function txDate(v){let [y,m,d]=v.split("-").map(Number);return new Date(y,m-1,d)}function txMD(d){return `${d.getMonth()+1}.${d.getDate()}`}function txKR(d){return `${d.getMonth()+1}월 ${d.getDate()}일`}function txLines(v){return String(v).replace(/\r\n?/g,"\n").split("\n").map(x=>x.trim()).filter(Boolean)}
+const taxPersonList=document.getElementById("taxPersonList");let taxPersonSeq=0;
+function addTaxPerson(name="",companies=""){taxPersonSeq++;const c=document.createElement("div");c.className="tax-person-card";c.innerHTML=`<label class="tax-field"><span>@ 뒤 담당자명</span><input type="text" class="tax-person-name" value="${escapeHTML(name)}" placeholder="예: 정희정 대표님"></label><label class="tax-field"><span>업체명</span><textarea class="tax-person-companies" placeholder="업체명을 줄마다 입력해 주세요.">${escapeHTML(companies)}</textarea></label><button type="button" class="tax-remove-btn">×</button>`;c.querySelector(".tax-person-name").addEventListener("input",updateTaxMorning);c.querySelector(".tax-person-companies").addEventListener("input",updateTaxMorning);c.querySelector(".tax-remove-btn").onclick=()=>{c.remove();updateTaxMorning()};taxPersonList.appendChild(c);updateTaxMorning()}
+const taxMorningDate=document.getElementById("taxMorningDate"),taxMorningOutput=document.getElementById("taxMorningOutput"),taxMorningDateInfo=document.getElementById("taxMorningDateInfo"),taxMorningBadge=document.getElementById("taxMorningBadge");
+function updateTaxMorning(){if(!taxMorningDate.value)return;let d=txDate(taxMorningDate.value),b=[];[...taxPersonList.querySelectorAll(".tax-person-card")].forEach(c=>{let n=c.querySelector(".tax-person-name").value.trim(),cs=txLines(c.querySelector(".tax-person-companies").value);if(!n&&!cs.length)return;b.push(`${n?`@${n}`:"@"}${cs.length?`\n${cs.join(" / ")}`:""}`)});taxMorningOutput.value=[`[오늘의 세금계산서(${txMD(d)})]`,...b].join("\n\n");taxMorningDateInfo.textContent=`${txKR(d)} 발행 예정`;taxMorningBadge.textContent=txMD(d)}
+function setTaxMorningToday(){taxMorningDate.value=txISO(new Date());updateTaxMorning()}document.getElementById("taxAddPersonBtn").onclick=()=>addTaxPerson();document.getElementById("taxMorningCopyBtn").onclick=async e=>{if(taxMorningOutput.value.trim())await copyResultText(taxMorningOutput.value,e.currentTarget)};document.getElementById("taxMorningTodayBtn").onclick=setTaxMorningToday;document.getElementById("taxMorningClearBtn").onclick=()=>{taxPersonList.innerHTML="";addTaxPerson()};taxMorningDate.addEventListener("change",updateTaxMorning);
+const taxIssuedDate=document.getElementById("taxIssuedDate"),taxIssuedCompanies=document.getElementById("taxIssuedCompanies"),taxIssuedOutput=document.getElementById("taxIssuedOutput"),taxIssuedDateInfo=document.getElementById("taxIssuedDateInfo"),taxIssuedBadge=document.getElementById("taxIssuedBadge");
+function updateTaxIssued(){if(!taxIssuedDate.value)return;let d=txDate(taxIssuedDate.value),cs=txLines(taxIssuedCompanies.value);taxIssuedOutput.value=`${txKR(d)} 오늘의 세금계산서 이미지입니다.\n\n${cs.join(" / ")}`;taxIssuedDateInfo.textContent=`${txKR(d)} 발행 공유`;taxIssuedBadge.textContent=txMD(d)}
+function setTaxIssuedToday(){taxIssuedDate.value=txISO(new Date());updateTaxIssued()}taxIssuedDate.addEventListener("change",updateTaxIssued);taxIssuedCompanies.addEventListener("input",updateTaxIssued);document.getElementById("taxIssuedCopyBtn").onclick=async e=>{if(taxIssuedOutput.value.trim())await copyResultText(taxIssuedOutput.value,e.currentTarget)};document.getElementById("taxIssuedTodayBtn").onclick=setTaxIssuedToday;document.getElementById("taxIssuedClearBtn").onclick=()=>{taxIssuedCompanies.value="";updateTaxIssued()};setTaxMorningToday();setTaxIssuedToday();addTaxPerson();
 </script>
 </body>
 </html>
