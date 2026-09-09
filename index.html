@@ -1401,6 +1401,273 @@ select{
 .korean-percent-doc-copy{background:#0f9f8f}
 @media(max-width:760px){.korean-doc-head{align-items:stretch;flex-direction:column}.korean-tax-toggle{width:100%}.korean-doc-grid{grid-template-columns:1fr}.korean-percent-doc-item{grid-column:auto}}
 
+
+.freederma-share-wrap{
+  max-width:980px;
+  margin:0;
+}
+
+.freederma-share-card{
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:var(--surface);
+  box-shadow:var(--shadow);
+}
+
+.freederma-share-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:15px 17px;
+  border-bottom:1px solid var(--line);
+}
+
+.freederma-share-title{
+  font-size:15px;
+  font-weight:1000;
+}
+
+.freederma-share-body{
+  padding:18px;
+}
+
+.freederma-share-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+
+.freederma-share-field{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.freederma-share-field.full{
+  grid-column:1 / -1;
+}
+
+.freederma-share-field span{
+  color:var(--muted);
+  font-size:12px;
+  font-weight:900;
+}
+
+.freederma-share-field input,
+.freederma-share-field textarea{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:10px;
+  color:var(--text);
+  background:#fbfdff;
+  outline:none;
+  transition:.16s ease;
+}
+
+.freederma-share-field input{
+  height:46px;
+  padding:0 13px;
+}
+
+.freederma-share-field textarea{
+  min-height:170px;
+  padding:13px;
+  resize:vertical;
+  font:14px/1.7 "Consolas","Malgun Gothic",monospace;
+}
+
+.freederma-share-field input:focus,
+.freederma-share-field textarea:focus{
+  border-color:#7c3aed;
+  background:#fff;
+  box-shadow:0 0 0 3px rgba(124,58,237,.10);
+}
+
+.freederma-share-output{
+  width:100%;
+  min-height:260px;
+  margin-top:16px;
+  padding:15px;
+  resize:vertical;
+  border:1px solid var(--line);
+  border-radius:12px;
+  color:var(--text);
+  background:#fbfdff;
+  outline:none;
+  font:14px/1.75 "Consolas","Malgun Gothic",monospace;
+}
+
+.freederma-share-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px;
+  margin-top:12px;
+}
+
+.freederma-share-actions .action-btn{
+  width:auto;
+  min-width:110px;
+}
+
+.freederma-share-status{
+  min-height:21px;
+  margin-top:10px;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.freederma-share-status.success{
+  color:#16845b;
+  font-weight:900;
+}
+
+@media(max-width:760px){
+  .freederma-share-grid{
+    grid-template-columns:1fr;
+  }
+
+  .freederma-share-field.full{
+    grid-column:auto;
+  }
+}
+
+
+.freederma-share-inline{
+  margin-top:16px;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:var(--surface);
+  box-shadow:var(--shadow);
+}
+
+.freederma-share-inline-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:15px 17px;
+  border-bottom:1px solid var(--line);
+}
+
+.freederma-share-inline-title{
+  font-size:15px;
+  font-weight:1000;
+}
+
+.freederma-share-inline-sub{
+  margin-top:4px;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.freederma-share-inline-body{
+  padding:16px;
+}
+
+.freederma-share-inline-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:14px;
+}
+
+.freederma-share-inline-field{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.freederma-share-inline-field span{
+  color:var(--muted);
+  font-size:12px;
+  font-weight:900;
+}
+
+.freederma-share-inline-field input{
+  width:100%;
+  height:46px;
+  padding:0 13px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  color:var(--text);
+  background:#fbfdff;
+  outline:none;
+}
+
+.freederma-share-inline-field input:focus{
+  border-color:#7c3aed;
+  background:#fff;
+  box-shadow:0 0 0 3px rgba(124,58,237,.10);
+}
+
+.freederma-test-buttons{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.freederma-test-btn{
+  height:46px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  color:var(--muted);
+  background:#fff;
+  font-weight:1000;
+  cursor:pointer;
+}
+
+.freederma-test-btn.active{
+  color:#fff;
+  border-color:#7c3aed;
+  background:#7c3aed;
+}
+
+.freederma-share-inline-output{
+  width:100%;
+  min-height:250px;
+  margin-top:15px;
+  padding:15px;
+  resize:vertical;
+  border:1px solid var(--line);
+  border-radius:12px;
+  color:var(--text);
+  background:#fbfdff;
+  outline:none;
+  font:14px/1.75 "Consolas","Malgun Gothic",monospace;
+}
+
+.freederma-share-inline-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px;
+  margin-top:12px;
+}
+
+.freederma-share-inline-actions .action-btn{
+  width:auto;
+  min-width:120px;
+}
+
+.freederma-share-inline-status{
+  min-height:21px;
+  margin-top:10px;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.freederma-share-inline-status.success{
+  color:#16845b;
+  font-weight:900;
+}
+
+@media(max-width:820px){
+  .freederma-share-inline-grid{
+    grid-template-columns:1fr;
+  }
+}
+
 </style>
 
 </head>
@@ -1831,6 +2098,53 @@ select{
           </div>
         </section>
 
+          <section class="freederma-share-inline">
+            <div class="freederma-share-inline-head">
+              <div>
+                <div class="freederma-share-inline-title">접수 공유 문구</div>
+                <div class="freederma-share-inline-sub">위 출력 결과를 제품 목록으로 자동 사용합니다.</div>
+              </div>
+              <div class="text-cleaner-count">자동</div>
+            </div>
+
+            <div class="freederma-share-inline-body">
+              <div class="freederma-share-inline-grid">
+                <label class="freederma-share-inline-field">
+                  <span>접수 차수</span>
+                  <input type="text" id="freedermaShareRound" placeholder="예: 9월 2차">
+                </label>
+
+                <div class="freederma-share-inline-field">
+                  <span>시험 종류</span>
+                  <div class="freederma-test-buttons">
+                    <button type="button" class="freederma-test-btn active" data-test-type="저자극">저자극</button>
+                    <button type="button" class="freederma-test-btn" data-test-type="민감성">민감성</button>
+                  </div>
+                </div>
+
+                <label class="freederma-share-inline-field">
+                  <span>raw data 발송일</span>
+                  <input type="date" id="freedermaShareDate">
+                </label>
+              </div>
+
+              <textarea
+                id="freedermaShareOutput"
+                class="freederma-share-inline-output"
+                readonly
+                spellcheck="false"
+                placeholder="접수 차수, 시험 종류, 발송일을 입력하면 공유 문구가 자동 생성됩니다."
+              ></textarea>
+
+              <div class="freederma-share-inline-actions">
+                <button type="button" class="action-btn" id="freedermaShareCopyBtn" style="background:#7c3aed;">공유 문구 복사</button>
+                <button type="button" class="action-btn btn-gray" id="freedermaShareClearBtn">공유 정보 초기화</button>
+              </div>
+
+              <div class="freederma-share-inline-status" id="freedermaShareStatus"></div>
+            </div>
+          </section>
+
         <div class="notice">
           ※ A와 B의 같은 줄끼리 조합됩니다.<br>
           ※ 빈 줄은 자동으로 제외됩니다.<br>
@@ -2055,7 +2369,7 @@ select{
 <div class="tax-actions"><button type="button" class="action-btn" id="taxIssuedCopyBtn" style="background:#f2b705;color:#172033">전체 복사</button><button type="button" class="action-btn btn-gray" id="taxIssuedTodayBtn">오늘로 변경</button><button type="button" class="action-btn btn-danger" id="taxIssuedClearBtn">전체 초기화</button></div></div></div>
 <div class="notice">※ 날짜는 선택한 당일로 자동 표시됩니다.<br>※ 아침 목록을 그대로 붙여넣어도 <b>@담당자</b>는 제외하고 업체명만 추출합니다.<br>※ 금액·퍼센트·품번은 제거하고 업체명을 <b> / </b>로 연결합니다.</div></section>
 </div></section>
-  </main>
+</main>
 </div>
 
 <script>
@@ -3399,6 +3713,84 @@ document.getElementById("copyKoreanPercentDoc").onclick=e=>copyKoreanCalcText(ko
 document.getElementById("copyKoreanAll").onclick=e=>copyKoreanCalcText([koreanBaseNumber.textContent,koreanBaseText.textContent,koreanBaseDoc1.textContent,koreanBaseDoc2.textContent,koreanPercentNumber.textContent,koreanPercentText.textContent,koreanPercentDoc.textContent].join("\n"),e.currentTarget);
 document.getElementById("resetKoreanAmount").onclick=()=>{koreanAmountInput.value="";koreanPercentInput.value="50";koreanTaxMode="별도";koreanTaxToggle.textContent="부가세 별도";koreanTaxToggle.classList.remove("included");updateKoreanAmountResults();koreanAmountInput.focus()};
 updateKoreanAmountResults();
+
+
+
+
+
+/* 프리더마 접수 공유 - 통합 */
+const freedermaShareRound=document.getElementById("freedermaShareRound");
+const freedermaShareDate=document.getElementById("freedermaShareDate");
+const freedermaShareOutput=document.getElementById("freedermaShareOutput");
+const freedermaShareStatus=document.getElementById("freedermaShareStatus");
+const freedermaTestButtons=[...document.querySelectorAll(".freederma-test-btn")];
+let freedermaTestType="저자극";
+
+function formatFreedermaShareDate(value){
+  if(!value) return "";
+  const [year,month,day]=value.split("-").map(Number);
+  if(!year || !month || !day) return "";
+  return `${month}월 ${day}일`;
+}
+
+function updateFreedermaShare(){
+  const round=freedermaShareRound.value.trim();
+  const rawDate=formatFreedermaShareDate(freedermaShareDate.value);
+  const products=String(freedermaOutput.value).trim();
+
+  const firstLine=round
+    ? `프리더마 ${round} ${freedermaTestType} 접수되었습니다.`
+    : `프리더마 ㅁㅁ ${freedermaTestType} 접수되었습니다.`;
+
+  freedermaShareOutput.value=
+`${firstLine}
+
+- 제품
+${products || "ㅁㅁ"}
+
+- raw data 발송일
+${rawDate || "ㅁㅁ"}`;
+
+  freedermaShareStatus.textContent="";
+  freedermaShareStatus.className="freederma-share-inline-status";
+}
+
+freedermaTestButtons.forEach(button=>{
+  button.addEventListener("click",()=>{
+    freedermaTestType=button.dataset.testType;
+    freedermaTestButtons.forEach(item=>item.classList.toggle("active",item===button));
+    updateFreedermaShare();
+  });
+});
+
+freedermaShareRound.addEventListener("input",updateFreedermaShare);
+freedermaShareDate.addEventListener("change",updateFreedermaShare);
+
+/* 위 프리더마 입력/출력이 바뀌면 공유 문구도 즉시 갱신 */
+freedermaNames.addEventListener("input",()=>setTimeout(updateFreedermaShare,0));
+freedermaContents.addEventListener("input",()=>setTimeout(updateFreedermaShare,0));
+
+document.getElementById("freedermaShareCopyBtn").addEventListener("click",async event=>{
+  if(!freedermaShareOutput.value.trim()) return;
+
+  await copyResultText(freedermaShareOutput.value,event.currentTarget);
+  freedermaShareStatus.textContent="공유 문구를 복사했습니다.";
+  freedermaShareStatus.className="freederma-share-inline-status success";
+});
+
+document.getElementById("freedermaShareClearBtn").addEventListener("click",()=>{
+  freedermaShareRound.value="";
+  freedermaShareDate.value="";
+  freedermaTestType="저자극";
+
+  freedermaTestButtons.forEach(button=>{
+    button.classList.toggle("active",button.dataset.testType==="저자극");
+  });
+
+  updateFreedermaShare();
+});
+
+updateFreedermaShare();
 
 </script>
 </body>
