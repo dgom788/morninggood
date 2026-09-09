@@ -1730,6 +1730,14 @@ select{
   }
 }
 
+
+.freederma-round-preview{
+  min-height:16px;
+  margin-top:-1px;
+  color:#7c3aed;
+  font-size:11px;
+  font-weight:900;
+}
 </style>
 
 </head>
@@ -2182,7 +2190,8 @@ select{
               <div class="freederma-share-inline-grid">
                 <label class="freederma-share-inline-field">
                   <span>접수 차수</span>
-                  <input type="text" id="freedermaShareRound" placeholder="예: 9월 2차">
+                  <input type="text" id="freedermaShareRound" placeholder="예: 9,2 / 9/2 / 9.2" inputmode="decimal">
+                  <small id="freedermaRoundPreview" class="freederma-round-preview"></small>
                 </label>
 
                 <div class="freederma-share-inline-field">
@@ -3799,9 +3808,33 @@ function formatFreedermaShareDate(value){
   return `${month}월 ${day}일`;
 }
 
+
+function parseFreedermaRound(value){
+  const text=String(value||"").trim();
+  if(!text) return "";
+
+  // 9,2 / 9/2 / 9.2 / 9-2 / 9 2 → 9월 2차
+  const simple=text.match(/^(\d{1,2})\s*[,\/.\-\s]\s*(\d{1,2})$/);
+  if(simple){
+    return `${Number(simple[1])}월 ${Number(simple[2])}차`;
+  }
+
+  // 이미 '9월 2차'처럼 입력한 경우도 그대로 정리
+  const written=text.match(/^(\d{1,2})\s*월\s*(\d{1,2})\s*차$/);
+  if(written){
+    return `${Number(written[1])}월 ${Number(written[2])}차`;
+  }
+
+  return text;
+}
+
 function updateFreedermaShare(){
-  const round=freedermaShareRound.value.trim();
+  const round=parseFreedermaRound(freedermaShareRound.value);
   const rawDate=formatFreedermaShareDate(freedermaShareDate.value);
+  const roundPreview=document.getElementById("freedermaRoundPreview");
+  if(roundPreview){
+    roundPreview.textContent=round ? `→ ${round}` : "";
+  }
   const products=String(freedermaOutput.value).trim();
 
   const firstLine=round
