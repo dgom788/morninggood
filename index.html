@@ -1668,6 +1668,68 @@ select{
   }
 }
 
+
+/* 메뉴 2열 배치 */
+.side-nav{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
+  gap:7px !important;
+  align-content:start;
+}
+.side-nav-btn{
+  width:100%;
+  min-width:0;
+  min-height:54px;
+  height:auto !important;
+  padding:8px 6px !important;
+  display:flex !important;
+  flex-direction:column;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:5px !important;
+  text-align:center;
+  line-height:1.2;
+}
+.side-nav-btn span:last-child{
+  width:100%;
+  min-width:0;
+  font-size:11px;
+  white-space:normal;
+  word-break:keep-all;
+  overflow-wrap:anywhere;
+}
+
+/* 프리더마 가로 배치 */
+#freedermaScreen .freederma-work-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1.55fr) minmax(320px,.85fr);
+  gap:16px;
+  align-items:start;
+}
+#freedermaScreen .freederma-left{
+  min-width:0;
+}
+#freedermaScreen .freederma-share-inline{
+  margin-top:0 !important;
+  min-width:0;
+  position:sticky;
+  top:18px;
+}
+#freedermaScreen .freederma-share-inline-grid{
+  grid-template-columns:1fr !important;
+}
+#freedermaScreen .freederma-share-inline-output{
+  min-height:320px;
+}
+@media(max-width:1050px){
+  #freedermaScreen .freederma-work-layout{
+    grid-template-columns:1fr;
+  }
+  #freedermaScreen .freederma-share-inline{
+    position:static;
+  }
+}
+
 </style>
 
 </head>
@@ -1728,7 +1790,7 @@ select{
 
       <button type="button" class="side-nav-btn" data-open="textExtractScreen">
         <span class="side-nav-icon">T</span>
-        <span>국문:, 영문: 제거</span>
+        <span>국영문 제거</span>
       </button>
 
       <button type="button" class="side-nav-btn" data-open="numberRemoveScreen">
@@ -2059,7 +2121,9 @@ select{
       </div>
 
       <div class="text-cleaner-wrap">
-        <div class="text-cleaner-grid">
+        <div class="freederma-work-layout">
+  <div class="freederma-left">
+<div class="text-cleaner-grid">
           <section class="text-cleaner-card">
             <div class="text-cleaner-head">
               <div class="text-cleaner-title">A · 업체</div>
@@ -2081,7 +2145,7 @@ select{
           </section>
         </div>
 
-        <section class="text-cleaner-card text-cleaner-output-card">
+<section class="text-cleaner-card text-cleaner-output-card">
           <div class="text-cleaner-head">
             <div class="text-cleaner-title">출력 결과</div>
             <div class="text-cleaner-count" id="freedermaOutputCount">0건</div>
@@ -2098,7 +2162,14 @@ select{
           </div>
         </section>
 
-          <section class="freederma-share-inline">
+<div class="notice">
+          ※ A와 B의 같은 줄끼리 조합됩니다.<br>
+          ※ 빈 줄은 자동으로 제외됩니다.<br>
+          ※ 줄 수가 다르면 부족한 쪽과 개수를 표시합니다.
+        </div>
+  </div>
+
+<section class="freederma-share-inline">
             <div class="freederma-share-inline-head">
               <div>
                 <div class="freederma-share-inline-title">접수 공유 문구</div>
@@ -2144,12 +2215,7 @@ select{
               <div class="freederma-share-inline-status" id="freedermaShareStatus"></div>
             </div>
           </section>
-
-        <div class="notice">
-          ※ A와 B의 같은 줄끼리 조합됩니다.<br>
-          ※ 빈 줄은 자동으로 제외됩니다.<br>
-          ※ 줄 수가 다르면 부족한 쪽과 개수를 표시합니다.
-        </div>
+</div>
       </div>
     </section>
 
