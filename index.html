@@ -1738,6 +1738,24 @@ select{
   font-size:11px;
   font-weight:900;
 }
+
+.rc-layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(340px,.85fr);gap:16px;align-items:start}
+.rc-panel{padding:18px}.rc-output-panel{position:sticky;top:18px}.rc-title{font-size:15px;font-weight:1000}
+.rc-help{margin-top:4px;color:var(--muted);font-size:12px}.rc-top{display:grid;grid-template-columns:1fr .65fr;gap:12px;margin-top:14px}
+.rc-field,.rc-item-field{display:flex;flex-direction:column;gap:7px}.rc-field>span,.rc-item-field>span{color:var(--muted);font-size:12px;font-weight:900}
+.rc-field input,.rc-item-field input{width:100%;height:44px;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:#fbfdff;color:var(--text);outline:none}
+.rc-field input:focus,.rc-item-field input:focus{border-color:#7c3aed;box-shadow:0 0 0 3px rgba(124,58,237,.1);background:#fff}
+.rc-field small{min-height:16px;color:#7c3aed;font-size:11px;font-weight:900}.rc-count{display:flex;align-items:center;gap:8px}.rc-count input{flex:1;min-width:0}
+.rc-line{height:1px;background:var(--line);margin:18px 0}.rc-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.rc-head .action-btn{width:auto}
+.rc-item{margin-top:12px;padding:14px;border:1px solid var(--line);border-radius:13px;background:#fbfdff}.rc-item-head{display:flex;justify-content:space-between;margin-bottom:11px}
+.rc-num{font-weight:1000;color:#7c3aed}.rc-remove{border:0;background:transparent;color:#9aa3b2;font-weight:900;cursor:pointer}
+.rc-item-grid{display:grid;grid-template-columns:1fr 1.35fr;gap:10px}.rc-route{grid-column:1/-1}.rc-route-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center}
+.rc-route-grid em{font-style:normal;font-weight:1000;color:#7c3aed}.rc-actions{display:flex;gap:9px;margin-top:14px}.rc-actions .action-btn{width:auto;min-width:120px}
+.rc-output{width:100%;min-height:470px;margin-top:14px;padding:15px;resize:vertical;border:1px solid var(--line);border-radius:12px;background:#fbfdff;color:var(--text);outline:none;font:14px/1.75 "Consolas","Malgun Gothic",monospace}
+.rc-status{min-height:20px;margin-top:9px;color:#16845b;font-size:12px;font-weight:900}
+@media(max-width:1050px){.rc-layout{grid-template-columns:1fr}.rc-output-panel{position:static}}
+@media(max-width:650px){.rc-top,.rc-item-grid,.rc-route-grid{grid-template-columns:1fr}.rc-route-grid em{text-align:center}}
+
 </style>
 
 </head>
@@ -1804,6 +1822,10 @@ select{
       <button type="button" class="side-nav-btn" data-open="numberRemoveScreen">
         <span class="side-nav-icon">#</span>
         <span>번호 제거</span>
+      </button>
+      <button type="button" class="side-nav-btn" data-open="roundChangeScreen">
+        <span class="side-nav-icon">↗</span>
+        <span>차수 변경</span>
       </button>
     </nav>
 
@@ -2365,7 +2387,46 @@ select{
       </div>
     </section>
 
-    <section class="screen" id="groupProductsScreen">
+    
+    <section class="screen" id="roundChangeScreen">
+      <div class="page-head">
+        <div class="page-kicker" style="color:#7c3aed;">ROUND CHANGE SHARE</div>
+        <h1>차수 변경 공유</h1>
+        <p>저자극 차수만 입력하면 민감성 일정까지 고정 규칙에 맞춰 자동으로 표시합니다.</p>
+      </div>
+      <div class="rc-layout">
+        <section class="panel rc-panel">
+          <div class="rc-title">변경 예정 차수</div>
+          <div class="rc-top">
+            <label class="rc-field"><span>저자극 차수</span>
+              <input id="rcTarget" type="text" inputmode="decimal" placeholder="예: 9,3 / 9.3 / 9/3">
+              <small id="rcPreview"></small>
+            </label>
+            <label class="rc-field"><span>전체 건수</span>
+              <div class="rc-count"><input id="rcCount" type="number" min="0" inputmode="numeric" placeholder="78"><b>건</b></div>
+            </label>
+          </div>
+          <div class="rc-line"></div>
+          <div class="rc-head">
+            <div><div class="rc-title">변경 항목</div><div class="rc-help">추가할 때마다 번호가 자동으로 붙습니다.</div></div>
+            <button type="button" class="action-btn" id="rcAdd" style="background:#7c3aed;">+ 항목 추가</button>
+          </div>
+          <div id="rcItems"></div>
+          <div class="rc-actions"><button type="button" class="action-btn btn-danger" id="rcReset">전체 초기화</button></div>
+        </section>
+        <section class="panel rc-panel rc-output-panel">
+          <div class="rc-title">공유 문구</div>
+          <div class="rc-help">입력하는 즉시 자동 완성됩니다.</div>
+          <textarea id="rcOutput" class="rc-output" readonly></textarea>
+          <div class="rc-actions"><button type="button" class="action-btn btn-primary" id="rcCopy">전체 복사</button></div>
+          <div id="rcStatus" class="rc-status"></div>
+        </section>
+      </div>
+      <div class="notice">※ 매월 1차 저자극 → 1차 민감성 / 2차 저자극 → 민감성 없음 / 3차 저자극 → 2차 민감성 / 4차 저자극 → 민감성 없음 규칙으로 자동 적용됩니다.<br>
+        ※ 차수 변경 입력에서는 <b>저 → 저자극</b>, <b>민 → 민감성</b>, <b>두저 → 두피저자극</b>, <b>두민 → 두피민감성</b>으로 자동 변환됩니다.</div>
+    </section>
+
+<section class="screen" id="groupProductsScreen">
       <div class="page-head">
         <div class="page-kicker" style="color:#0f9f8f;">COMPANY GROUPER</div>
         <h1>업체별 묶기</h1>
@@ -3890,6 +3951,41 @@ document.getElementById("freedermaShareClearBtn").addEventListener("click",()=>{
 });
 
 updateFreedermaShare();
+
+
+/* 차수 변경 공유 */
+const rcTarget=document.getElementById("rcTarget"),rcCount=document.getElementById("rcCount"),rcPreview=document.getElementById("rcPreview"),rcItems=document.getElementById("rcItems"),rcOutput=document.getElementById("rcOutput"),rcStatus=document.getElementById("rcStatus");
+function rcParse(v){
+  let t=String(v||"").trim();
+  let m=t.match(/^(\d{1,2})\s*[,\/.\-\s]\s*(\d{1,2})(?:\s*차)?(?:\s*(두저|두민|저|민|저자극|민감성|두피저자극|두피민감성))?$/);
+  if(!m)m=t.match(/^(\d{1,2})\s*월\s*(\d{1,2})\s*차?(?:\s*(두저|두민|저|민|저자극|민감성|두피저자극|두피민감성))?$/);
+  if(!m)return null;
+  const typeMap={
+    "저":"저자극",
+    "민":"민감성",
+    "두저":"두피저자극",
+    "두민":"두피민감성",
+    "저자극":"저자극",
+    "민감성":"민감성",
+    "두피저자극":"두피저자극",
+    "두피민감성":"두피민감성"
+  };
+  return {m:+m[1],r:+m[2],type:typeMap[m[3]]||""};
+}
+function rcSchedule(v){let p=rcParse(v);if(!p)return "";let a=`${p.m}월 ${p.r}차 저자극`;if(p.r===1)return `${a}/${p.m}월 1차 민감성`;if(p.r===3)return `${a}/${p.m}월 2차 민감성`;return a}
+function rcNorm(v){
+  let t=String(v||"").trim(),p=rcParse(t);
+  if(!p)return t;
+  return `${p.m}월 ${p.r}차${p.type?" "+p.type:""}`;
+}
+function rcEsc(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function rcRenumber(){[...rcItems.children].forEach((x,i)=>x.querySelector(".rc-num").textContent=`${i+1}번 항목`)}
+function rcUpdate(){let target=rcSchedule(rcTarget.value),count=rcCount.value.trim();rcPreview.textContent=target?`→ ${target}`:"";let lines=[`${target||"ㅁㅁ"} ${count||"ㅁㅁ"}건으로 차수 변경될 예정입니다.`];[...rcItems.children].forEach((x,i)=>{let co=x.querySelector(".rc-company").value.trim(),pr=x.querySelector(".rc-products").value.trim(),fr=rcNorm(x.querySelector(".rc-from").value),to=rcNorm(x.querySelector(".rc-to").value);lines.push("",`${i+1}. ${co||"업체명"} : ${pr||"제품명"}`,`${fr||"변경 차수"} > ${to||"접수 차수2"}`)});rcOutput.value=lines.join("\n");rcStatus.textContent=""}
+function rcAdd(data={}){let x=document.createElement("div");x.className="rc-item";x.innerHTML=`<div class="rc-item-head"><div class="rc-num"></div><button type="button" class="rc-remove">삭제</button></div><div class="rc-item-grid"><label class="rc-item-field"><span>업체명</span><input class="rc-company" placeholder="예: 나모웰니스" value="${rcEsc(data.company||"")}"></label><label class="rc-item-field"><span>제품명</span><input class="rc-products" placeholder="여러 제품은 쉼표로 구분" value="${rcEsc(data.products||"")}"></label><div class="rc-item-field rc-route"><span>변경 차수 > 접수 차수2</span><div class="rc-route-grid"><input class="rc-from" placeholder="예: 10,1 민 / 10,1 저"><em>→</em><input class="rc-to" placeholder="예: 9,2 민 / 9,2 두민"></div></div></div>`;rcItems.appendChild(x);x.querySelectorAll("input").forEach(e=>e.addEventListener("input",rcUpdate));x.querySelector(".rc-remove").onclick=()=>{x.remove();rcRenumber();rcUpdate()};rcRenumber();rcUpdate()}
+document.getElementById("rcAdd").onclick=()=>rcAdd();rcTarget.addEventListener("input",rcUpdate);rcCount.addEventListener("input",rcUpdate);
+document.getElementById("rcReset").onclick=()=>{rcTarget.value="";rcCount.value="";rcItems.innerHTML="";rcAdd();rcStatus.textContent=""};
+document.getElementById("rcCopy").onclick=async e=>{await copyResultText(rcOutput.value,e.currentTarget);rcStatus.textContent="공유 문구를 복사했습니다."};
+rcAdd();
 
 </script>
 </body>
