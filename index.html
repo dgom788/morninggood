@@ -1757,7 +1757,7 @@ select{
 @media(max-width:1050px){.rc-layout{grid-template-columns:1fr}.rc-output-panel{position:static}}
 @media(max-width:650px){.rc-top,.rc-item-grid,.rc-route-grid{grid-template-columns:1fr}.rc-route-grid em{text-align:center}}
 
-</style>
+.ie-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}.ie-panel{padding:18px}.ie-head{display:flex;justify-content:space-between;gap:12px;margin-bottom:12px}.ie-head b{display:block;font-size:15px}.ie-head small{display:block;margin-top:4px;color:var(--muted);font-size:12px}.ie-area{width:100%;min-height:500px;padding:15px;margin-bottom:12px;resize:vertical;border:1px solid var(--line);border-radius:12px;background:#fbfdff;color:var(--text);outline:none;font:13px/1.65 "Consolas","Malgun Gothic",monospace}.ie-area:focus{border-color:#7c3aed;box-shadow:0 0 0 3px rgba(124,58,237,.1)}.ie-result{font-size:14px;line-height:1.75}.ie-panel .action-btn{width:auto;min-width:120px}.ie-status{min-height:20px;margin-top:9px;color:#16845b;font-size:12px;font-weight:900}@media(max-width:900px){.ie-layout{grid-template-columns:1fr}.ie-area{min-height:360px}}</style>
 
 </head>
 
@@ -1823,6 +1823,10 @@ select{
       <button type="button" class="side-nav-btn" data-open="numberRemoveScreen">
         <span class="side-nav-icon">#</span>
         <span>번호 제거</span>
+      </button>
+      <button type="button" class="side-nav-btn" data-open="itemExtractScreen">
+        <span class="side-nav-icon">E</span>
+        <span>항목 추출</span>
       </button>
       <button type="button" class="side-nav-btn" data-open="roundChangeScreen">
         <span class="side-nav-icon">↗</span>
@@ -2389,7 +2393,15 @@ select{
     </section>
 
     
-    <section class="screen" id="roundChangeScreen">
+    <section class="screen" id="itemExtractScreen">
+<div class="page-head"><div class="page-kicker" style="color:#7c3aed;">EXCEL ITEM EXTRACTOR</div><h1>항목 추출</h1><p>엑셀 범위를 그대로 붙여넣으면 국문 표기 유무와 관계없이 제품·내용 블록과 의뢰항목을 자동 정리합니다.</p></div>
+<div class="ie-layout">
+<section class="panel ie-panel"><div class="ie-head"><div><b>엑셀 원본 붙여넣기</b><small>제품명·의뢰항목 범위를 그대로 복사해 붙여넣으세요.</small></div><span class="text-cleaner-count" id="ieInCount">0줄</span></div><textarea id="ieInput" class="ie-area" spellcheck="false" placeholder="엑셀에서 복사한 내용을 그대로 붙여넣어 주세요."></textarea><button type="button" class="action-btn btn-danger" id="ieClear">전체 초기화</button></section>
+<section class="panel ie-panel"><div class="ie-head"><div><b>정리 결과</b><small>국문 표기가 없어도 왼쪽 열의 내용 블록과 오른쪽 의뢰항목을 함께 정리합니다.</small></div><span class="text-cleaner-count" id="ieOutCount">0건</span></div><textarea id="ieOutput" class="ie-area ie-result" readonly></textarea><button type="button" class="action-btn btn-primary" id="ieCopy">전체 복사</button><div id="ieStatus" class="ie-status"></div></section>
+</div>
+<div class="notice">※ <b>국문:</b>은 필수가 아닙니다. 있으면 표시만 제거하고 <b>영문:</b>은 제외합니다.<br>※ 왼쪽 열의 새 내용 블록을 항목 시작으로 보고 오른쪽 의뢰항목을 함께 묶습니다.<br>※ 빈 줄과 불필요한 연속 공백은 제거하고 <b>4대·7중·24시간·1일차</b>처럼 숫자와 바로 뒤 단어는 붙여서 유지합니다.<br>※ 각 블록에 <b>1. 2. 3.</b> 번호를 자동으로 붙입니다.</div>
+</section>
+<section class="screen" id="roundChangeScreen">
       <div class="page-head">
         <div class="page-kicker" style="color:#7c3aed;">ROUND CHANGE SHARE</div>
         <h1>차수 변경 공유</h1>
@@ -4003,6 +4015,31 @@ document.getElementById("rcReset").onclick=()=>{rcTarget.value="";rcCount.value=
 document.getElementById("rcCopy").onclick=async e=>{await copyResultText(rcOutput.value,e.currentTarget);rcStatus.textContent="공유 문구를 복사했습니다."};
 rcAdd();
 
+
+const ieInput=document.getElementById("ieInput"),ieOutput=document.getElementById("ieOutput"),ieInCount=document.getElementById("ieInCount"),ieOutCount=document.getElementById("ieOutCount"),ieStatus=document.getElementById("ieStatus");
+function ieClean(s){return String(s||"").replace(/\u00a0/g," ").replace(/[ \t]+/g," ").replace(/\s+([,.)])/g,"$1").replace(/([(])\s+/g,"$1").trim()}
+function ieRows(raw){let rows=[],row=[],f="",q=false;for(let i=0;i<raw.length;i++){let c=raw[i];if(c==='"'){if(q&&raw[i+1]==='"'){f+='"';i++}else q=!q}else if(c==="\t"&&!q){row.push(f);f=""}else if(c==="\n"&&!q){row.push(f);rows.push(row);row=[];f=""}else f+=c}row.push(f);rows.push(row);return rows}
+function ieLines(cell){let out=[],skip=false;for(let raw of String(cell||"").replace(/\r/g,"").split("\n")){let x=ieClean(raw);if(!x)continue;if(/^국문\s*:/.test(x)){x=ieClean(x.replace(/^국문\s*:\s*/,""));skip=false;if(x)out.push(x);continue}if(/^영문\s*:/.test(x)){skip=true;continue}if(skip&&!/[가-힣]/.test(x))continue;if(skip&&/[가-힣]/.test(x))skip=false;out.push(x)}return out}
+function ieRun(){
+ let raw=ieInput.value.replace(/\r\n?/g,"\n");ieInCount.textContent=`${raw?raw.split("\n").length:0}줄`;
+ if(!raw.trim()){ieOutput.value="";ieOutCount.textContent="0건";return}
+ let blocks=[],cur=null;
+ const add=(arr,vals)=>vals.forEach(v=>{if(v&&!arr.includes(v))arr.push(v)});
+ for(const row of ieRows(raw)){
+   let left=ieLines(row[0]||""),right=[];for(let c=1;c<row.length;c++)add(right,ieLines(row[c]||""));
+   if(!left.length&&!right.length)continue;
+   let rawLeft=String(row[0]||""),explicit=/국문\s*:/.test(rawLeft),special=left.some(x=>/^\*/.test(x)),paired=left.length&&right.length;
+   if(!cur){if(left.length){cur={left:[...left],right:[...right]};blocks.push(cur)}continue}
+   if(explicit||special||paired){cur={left:[...left],right:[...right]};blocks.push(cur)}
+   else if(left.length&&!right.length)add(cur.left,left);
+   else if(!left.length&&right.length)add(cur.right,right);
+ }
+ ieOutput.value=blocks.map((b,i)=>{let all=[...b.left,...b.right];return all.length?[`${i+1}. ${all[0]}`,...all.slice(1)].join("\n"):""}).filter(Boolean).join("\n\n");
+ ieOutCount.textContent=`${blocks.length}건`;ieStatus.textContent="";
+}
+ieInput.addEventListener("input",ieRun);
+document.getElementById("ieClear").onclick=()=>{ieInput.value="";ieOutput.value="";ieInCount.textContent="0줄";ieOutCount.textContent="0건";ieStatus.textContent=""};
+document.getElementById("ieCopy").onclick=async e=>{if(!ieOutput.value.trim())return;await copyResultText(ieOutput.value,e.currentTarget);ieStatus.textContent="정리 결과를 복사했습니다."};
 </script>
 </body>
 </html>
