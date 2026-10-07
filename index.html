@@ -1757,7 +1757,7 @@ select{
 @media(max-width:1050px){.rc-layout{grid-template-columns:1fr}.rc-output-panel{position:static}}
 @media(max-width:650px){.rc-top,.rc-item-grid,.rc-route-grid{grid-template-columns:1fr}.rc-route-grid em{text-align:center}}
 
-.ie-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}.ie-panel{padding:18px}.ie-head{display:flex;justify-content:space-between;gap:12px;margin-bottom:12px}.ie-head b{display:block;font-size:15px}.ie-head small{display:block;margin-top:4px;color:var(--muted);font-size:12px}.ie-area{width:100%;min-height:500px;padding:15px;margin-bottom:12px;resize:vertical;border:1px solid var(--line);border-radius:12px;background:#fbfdff;color:var(--text);outline:none;font:13px/1.65 "Consolas","Malgun Gothic",monospace}.ie-area:focus{border-color:#7c3aed;box-shadow:0 0 0 3px rgba(124,58,237,.1)}.ie-result{font-size:14px;line-height:1.75}.ie-panel .action-btn{width:auto;min-width:120px}.ie-status{min-height:20px;margin-top:9px;color:#16845b;font-size:12px;font-weight:900}@media(max-width:900px){.ie-layout{grid-template-columns:1fr}.ie-area{min-height:360px}}</style>
+.ie-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}.ie-panel{padding:18px}.ie-head{display:flex;justify-content:space-between;gap:12px;margin-bottom:12px}.ie-head b{display:block;font-size:15px}.ie-head small{display:block;margin-top:4px;color:var(--muted);font-size:12px}.ie-area{width:100%;min-height:500px;padding:15px;margin-bottom:12px;resize:vertical;border:1px solid var(--line);border-radius:12px;background:#fbfdff;color:var(--text);outline:none;font:13px/1.65 "Consolas","Malgun Gothic",monospace}.ie-area:focus{border-color:#7c3aed;box-shadow:0 0 0 3px rgba(124,58,237,.1)}.ie-result{font-size:14px;line-height:1.75}.ie-panel .action-btn{width:auto;min-width:120px}.ie-status{min-height:20px;margin-top:9px;color:#16845b;font-size:12px;font-weight:900}@media(max-width:900px){.ie-layout{grid-template-columns:1fr}.ie-area{min-height:360px}}.lr-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}.lr-panel{padding:18px}.lr-head{display:flex;justify-content:space-between;gap:12px;margin-bottom:12px}.lr-head b{display:block;font-size:15px}.lr-head small{display:block;margin-top:4px;color:var(--muted);font-size:12px}.lr-area{width:100%;min-height:430px;padding:15px;resize:vertical;border:1px solid var(--line);border-radius:12px;background:#fbfdff;color:var(--text);outline:none;font:14px/1.75 "Consolas","Malgun Gothic",monospace}.lr-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}.lr-actions .action-btn{width:auto;min-width:120px}.lr-status{min-height:20px;margin-top:9px;color:#16845b;font-size:12px;font-weight:900}@media(max-width:900px){.lr-layout{grid-template-columns:1fr}.lr-area{min-height:330px}}</style>
 
 </head>
 
@@ -1831,6 +1831,9 @@ select{
       <button type="button" class="side-nav-btn" data-open="roundChangeScreen">
         <span class="side-nav-icon">↗</span>
         <span>차수 변경</span>
+      </button>
+      <button type="button" class="side-nav-btn" data-open="lineRemoveScreen">
+        <span class="side-nav-icon">↵</span><span>엔터 삭제</span>
       </button>
     </nav>
 
@@ -2518,7 +2521,14 @@ select{
 <div class="tax-actions"><button type="button" class="action-btn" id="taxIssuedCopyBtn" style="background:#f2b705;color:#172033">전체 복사</button><button type="button" class="action-btn btn-gray" id="taxIssuedTodayBtn">오늘로 변경</button><button type="button" class="action-btn btn-danger" id="taxIssuedClearBtn">전체 초기화</button></div></div></div>
 <div class="notice">※ 날짜는 선택한 당일로 자동 표시됩니다.<br>※ 아침 목록을 그대로 붙여넣으면 업체명과 <b>@담당자</b>를 함께 추출합니다.<br>※ 발행 공유에서는 업체명을 <b> / </b>로 연결한 뒤, 그 아래에 @태그를 아침 목록에 나온 순서대로 표시합니다.<br>※ 금액·퍼센트·품번은 자동으로 제외합니다.</div></section>
 </div></section>
-</main>
+<section class="screen" id="lineRemoveScreen">
+<div class="page-head"><div class="page-kicker" style="color:#7c3aed;">LINE BREAK CLEANER</div><h1>엔터 삭제</h1><p>엑셀에서 복사한 목록의 빈 줄을 제거하고 필요하면 전체 내용을 큰따옴표로 감쌉니다.</p></div>
+<div class="lr-layout">
+<section class="panel lr-panel"><div class="lr-head"><div><b>원본 입력</b><small>엑셀에서 복사한 내용을 그대로 붙여넣으세요.</small></div><span class="text-cleaner-count" id="lrInCount">0줄</span></div><textarea id="lrInput" class="lr-area" spellcheck="false"></textarea><div class="lr-actions"><button type="button" class="action-btn btn-danger" id="lrClear">전체 초기화</button></div></section>
+<section class="panel lr-panel"><div class="lr-head"><div><b>정리 결과</b><small>빈 줄을 제거하고 값이 있는 텍스트만 남깁니다.</small></div><span class="text-cleaner-count" id="lrOutCount">0건</span></div><textarea id="lrOutput" class="lr-area" readonly></textarea><div class="lr-actions"><button type="button" class="action-btn btn-primary" id="lrCopy">그대로 복사</button><button type="button" class="action-btn" id="lrQuote" style="background:#7c3aed;">" " 추가해서 복사</button></div><div id="lrStatus" class="lr-status"></div></section>
+</div>
+<div class="notice">※ 값이 없는 빈 행만 자동으로 제거하고 실제 텍스트 항목은 한 줄씩 유지합니다.<br>※ <b>" " 추가해서 복사</b>를 누르면 첫 항목 앞과 마지막 항목 뒤에 큰따옴표가 하나씩 추가됩니다.</div>
+</section></main>
 </div>
 
 <script>
@@ -4040,6 +4050,11 @@ function ieRun(){
 ieInput.addEventListener("input",ieRun);
 document.getElementById("ieClear").onclick=()=>{ieInput.value="";ieOutput.value="";ieInCount.textContent="0줄";ieOutCount.textContent="0건";ieStatus.textContent=""};
 document.getElementById("ieCopy").onclick=async e=>{if(!ieOutput.value.trim())return;await copyResultText(ieOutput.value,e.currentTarget);ieStatus.textContent="정리 결과를 복사했습니다."};
-</script>
+const lrInput=document.getElementById("lrInput"),lrOutput=document.getElementById("lrOutput"),lrInCount=document.getElementById("lrInCount"),lrOutCount=document.getElementById("lrOutCount"),lrStatus=document.getElementById("lrStatus");
+function lrUpdate(){let raw=String(lrInput.value||"").replace(/\r\n?/g,"\n"),lines=raw.split("\n").map(x=>x.replace(/\u00a0/g," ").replace(/[ \t]+/g," ").trim()).filter(Boolean);lrInCount.textContent=`${raw.trim()?raw.split("\n").length:0}줄`;lrOutCount.textContent=`${lines.length}건`;lrOutput.value=lines.join("\n");lrStatus.textContent=""}
+lrInput.addEventListener("input",lrUpdate);
+document.getElementById("lrClear").onclick=()=>{lrInput.value="";lrUpdate()};
+document.getElementById("lrCopy").onclick=async e=>{let t=lrOutput.value.trim();if(!t)return;await copyResultText(t,e.currentTarget);lrStatus.textContent="정리 결과를 복사했습니다."};
+document.getElementById("lrQuote").onclick=async e=>{let t=lrOutput.value.trim();if(!t)return;await copyResultText('"'+t+'"',e.currentTarget);lrStatus.textContent='시작과 끝에 "를 추가해서 복사했습니다.'};</script>
 </body>
 </html>
