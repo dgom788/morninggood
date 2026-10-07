@@ -2298,7 +2298,7 @@ select{
 
                 <div class="text-cleaner-actions">
                   <button type="button" class="action-btn" id="koreanCopyBtn" style="background:#7c3aed;">전체 복사</button>
-                  <button type="button" class="action-btn btn-gray" id="koreanDownloadBtn">TXT 저장</button>
+                  <button type="button" class="action-btn btn-gray" id="koreanQuoteCopyBtn">" " 추가해서 복사</button>
                   <button type="button" class="action-btn btn-danger" id="koreanClearBtn">전체 초기화</button>
                 </div>
                 <div class="text-cleaner-status" id="koreanStatus"></div>
@@ -2334,7 +2334,7 @@ select{
 
                 <div class="text-cleaner-actions">
                   <button type="button" class="action-btn" id="englishCopyBtn" style="background:#7c3aed;">전체 복사</button>
-                  <button type="button" class="action-btn btn-gray" id="englishDownloadBtn">TXT 저장</button>
+                  <button type="button" class="action-btn btn-gray" id="englishQuoteCopyBtn">" " 추가해서 복사</button>
                   <button type="button" class="action-btn btn-danger" id="englishClearBtn">전체 초기화</button>
                 </div>
                 <div class="text-cleaner-status" id="englishStatus"></div>
@@ -3578,10 +3578,9 @@ function bindExtractor(config){
     if(output.value.trim()) await copyResultText(output.value,e.currentTarget);
   });
 
-  document.getElementById(config.download).addEventListener("click",()=>{
-    if(output.value.trim()){
-      downloadBlob(new Blob(["\uFEFF"+output.value],{type:"text/plain;charset=utf-8"}),`${config.label}_추출.txt`);
-    }
+  document.getElementById(config.quoteCopy).addEventListener("click",async e=>{
+    const text=output.value.trim();
+    if(text) await copyResultText('"'+text+'"',e.currentTarget);
   });
 
   document.getElementById(config.clear).addEventListener("click",()=>{
@@ -3593,13 +3592,13 @@ function bindExtractor(config){
 bindExtractor({
   input:"koreanInput",output:"koreanOutput",inputCount:"koreanInputCount",outputCount:"koreanOutputCount",
   removeQuotes:"koreanRemoveQuotes",removeDuplicate:"koreanRemoveDuplicate",status:"koreanStatus",
-  copy:"koreanCopyBtn",download:"koreanDownloadBtn",clear:"koreanClearBtn",language:"ko",label:"국문"
+  copy:"koreanCopyBtn",quoteCopy:"koreanQuoteCopyBtn",clear:"koreanClearBtn",language:"ko",label:"국문"
 });
 
 bindExtractor({
   input:"englishInput",output:"englishOutput",inputCount:"englishInputCount",outputCount:"englishOutputCount",
   removeQuotes:"englishRemoveQuotes",removeDuplicate:"englishRemoveDuplicate",status:"englishStatus",
-  copy:"englishCopyBtn",download:"englishDownloadBtn",clear:"englishClearBtn",language:"en",label:"영문"
+  copy:"englishCopyBtn",quoteCopy:"englishQuoteCopyBtn",clear:"englishClearBtn",language:"en",label:"영문"
 });
 
 
